@@ -1,8 +1,8 @@
 """Integration tests for cli.py's wiring of stats/share/explain/fix/setup-ai.
 
 Every test overrides the relevant env var (OHNOO_LAST_ROAST_FILE,
-OHNOO_STATS_FILE, OHNOO_CONFIG_PATH) via monkeypatch + tmp_path so nothing
-ever touches the real user home directory.
+OHNOO_STATS_FILE, OHNOO_CONFIG_PATH, OHNOO_SHARE_DIR) via monkeypatch +
+tmp_path so nothing ever touches the real user home directory.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ def _isolate_state(monkeypatch, tmp_path):
     monkeypatch.setenv("OHNOO_LAST_ROAST_FILE", str(tmp_path / "last_roast.json"))
     monkeypatch.setenv("OHNOO_STATS_FILE", str(tmp_path / "stats.json"))
     monkeypatch.setenv("OHNOO_CONFIG_PATH", str(tmp_path / "config.toml"))
+    monkeypatch.setenv("OHNOO_SHARE_DIR", str(tmp_path / "shares"))
 
 
 def test_pipe_mode_matched_error_saves_stats_and_last_roast(tmp_path, monkeypatch):
