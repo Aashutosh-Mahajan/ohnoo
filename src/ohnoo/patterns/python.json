@@ -1,0 +1,687 @@
+[
+  {
+    "id": "py-module-not-found",
+    "language": "python",
+    "title": "ModuleNotFoundError",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ModuleNotFoundError: No module named '([\\w.]+)'"
+    },
+    "slots": {
+      "1": "module_name"
+    },
+    "jokes": [
+      "Python looked everywhere for '{module_name}' and found nothing, much like your test coverage.",
+      "'{module_name}' does not exist in this timeline. Try pip install.",
+      "You imported '{module_name}' on vibes alone. It did not work.",
+      "Congratulations, you've discovered a module that isn't installed: '{module_name}'.",
+      "Python's import system just ghosted you looking for '{module_name}'.",
+      "'{module_name}' is currently on a coffee break. Also it's not installed.",
+      "Bold of you to assume '{module_name}' would just be there."
+    ],
+    "vibes": {
+      "gordon-ramsay": [
+        "IT'S NOT INSTALLED! '{module_name}' IS RAW! You forgot to pip install it, you donut!",
+        "'{module_name}'?! I've seen better imports from a first-year cooking student!"
+      ],
+      "zen": [
+        "The module '{module_name}' does not yet exist in your environment. This too can be resolved.",
+        "Breathe. '{module_name}' simply needs to be installed. All is well."
+      ],
+      "sarcastic-senior-dev": [
+        "'{module_name}' isn't installed. Yes, again. pip install exists for a reason.",
+        "Seen this one a thousand times: '{module_name}' is never installed on the first try.",
+        "'{module_name}' not found. Groundbreaking discovery, truly."
+      ]
+    },
+    "fix": {
+      "summary": "Install the missing package.",
+      "command": "pip install {module_name}"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "import",
+      "dependency"
+    ]
+  },
+  {
+    "id": "py-indentation-error",
+    "language": "python",
+    "title": "IndentationError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "IndentationError"
+    },
+    "jokes": [
+      "Python is not a vibes-based indentation language. Fix your whitespace.",
+      "Tabs and spaces had a fight and your file lost.",
+      "Your code's indentation is more chaotic than your sleep schedule.",
+      "IndentationError: because Python cares more about whitespace than you do.",
+      "Somewhere, a tab and four spaces are locked in combat inside your file.",
+      "This isn't free-form poetry. Indent consistently."
+    ],
+    "fix": {
+      "summary": "Check for mixed tabs/spaces and re-indent consistently.",
+      "command": "python -m tabnanny {file}"
+    },
+    "personality_tag": "syntax",
+    "tags": [
+      "syntax"
+    ]
+  },
+  {
+    "id": "py-syntax-error",
+    "language": "python",
+    "title": "SyntaxError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "SyntaxError"
+    },
+    "jokes": [
+      "Python couldn't parse that. Neither could I, honestly.",
+      "That's not Python. That's just vibes with parentheses.",
+      "SyntaxError: your keyboard may have slipped.",
+      "You wrote something Python has never seen before. Not in a good way.",
+      "This code compiles in the language of hope only.",
+      "Even the parser is confused, and it doesn't get confused."
+    ],
+    "fix": {
+      "summary": "Re-read the flagged line for a missing colon, paren, or quote.",
+      "command": "python -c \"import ast; ast.parse(open('{file}').read())\""
+    },
+    "personality_tag": "syntax",
+    "tags": [
+      "syntax"
+    ]
+  },
+  {
+    "id": "py-name-error",
+    "language": "python",
+    "title": "NameError",
+    "matcher": {
+      "type": "regex",
+      "pattern": "NameError: name '(\\w+)' is not defined"
+    },
+    "slots": {
+      "1": "name"
+    },
+    "jokes": [
+      "'{name}' is not defined. Neither is your variable-naming strategy.",
+      "You used '{name}' before you created it. Time travel isn't supported.",
+      "Python has no idea what '{name}' is. Honestly, fair.",
+      "'{name}' sounds like something you meant to declare and forgot.",
+      "This is the Python equivalent of asking for someone who doesn't work here.",
+      "'{name}' is not defined, much like the requirements for this feature."
+    ],
+    "fix": {
+      "summary": "Define the variable before use, or check for a typo.",
+      "command": "grep -n \"{name}\" {file}"
+    },
+    "personality_tag": "reference",
+    "tags": [
+      "runtime"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "'{name}' is not defined. I'd ask if you meant something else, but I already know the answer is no.",
+        "Undefined name '{name}'. Every junior does this exactly once a day."
+      ]
+    }
+  },
+  {
+    "id": "py-attribute-error",
+    "language": "python",
+    "title": "AttributeError",
+    "matcher": {
+      "type": "regex",
+      "pattern": "AttributeError: '(\\w+)' object has no attribute '(\\w+)'"
+    },
+    "slots": {
+      "1": "type_name",
+      "2": "attr_name"
+    },
+    "jokes": [
+      "'{type_name}' does not have '.{attr_name}'. It never did. It never will.",
+      "You asked a '{type_name}' for '.{attr_name}' like it owed you something.",
+      "'.{attr_name}' is not real and cannot hurt you. Also it's not on '{type_name}'.",
+      "That '{type_name}' object looked at '.{attr_name}' and said 'never heard of her'.",
+      "AttributeError: you're calling a method that simply does not exist on '{type_name}'.",
+      "Someone assumed duck typing would save them. It did not."
+    ],
+    "fix": {
+      "summary": "Check the object type and available attributes.",
+      "command": "python -c \"help({type_name})\""
+    },
+    "personality_tag": "reference",
+    "tags": [
+      "runtime"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "'{type_name}' has no '.{attr_name}'. Did you check the docs, or just guess and hope?",
+        "That attribute doesn't exist on '{type_name}'. It never has. This isn't new information."
+      ]
+    }
+  },
+  {
+    "id": "py-type-error-arg-count",
+    "language": "python",
+    "title": "TypeError: argument mismatch",
+    "matcher": {
+      "type": "regex",
+      "pattern": "TypeError: \\w+\\(\\) (takes|missing) .*argument"
+    },
+    "jokes": [
+      "Wrong number of arguments. Math was always going to catch up with you.",
+      "You called a function like it was a suggestion box.",
+      "This function has opinions about how many arguments it accepts. Listen to it.",
+      "TypeError: you and this function disagree on arity.",
+      "Somewhere, a function signature is silently judging you."
+    ],
+    "fix": {
+      "summary": "Check the function signature and pass the correct number of arguments.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ]
+  },
+  {
+    "id": "py-key-error",
+    "language": "python",
+    "title": "KeyError",
+    "matcher": {
+      "type": "regex",
+      "pattern": "KeyError: '?([\\w.\\-]+)'?"
+    },
+    "slots": {
+      "1": "key"
+    },
+    "jokes": [
+      "'{key}' is not in that dict. It never checked in.",
+      "You reached into a dictionary for '{key}' and came up empty-handed.",
+      "KeyError: '{key}' \u2014 a classic tale of assuming data exists.",
+      "'{key}' is missing, much like input validation.",
+      "This dict does not recognize '{key}' as a member of this family."
+    ],
+    "fix": {
+      "summary": "Use .get() with a default, or verify the key exists first.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime",
+      "dict"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "'{key}' isn't in that dict. A quick .get() with a default would've saved us both this conversation.",
+        "KeyError on '{key}'. Classic 'assume the data is always there' move."
+      ]
+    }
+  },
+  {
+    "id": "py-index-error",
+    "language": "python",
+    "title": "IndexError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "IndexError"
+    },
+    "jokes": [
+      "You reached past the end of the list. It ends where it ends.",
+      "IndexError: there is no spoon at that index.",
+      "That list is shorter than your ambitions.",
+      "You asked for an element that simply isn't there. Bold.",
+      "Off-by-one errors: the original sin of programming."
+    ],
+    "fix": {
+      "summary": "Check the list length before indexing.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime",
+      "list"
+    ]
+  },
+  {
+    "id": "py-zero-division",
+    "language": "python",
+    "title": "ZeroDivisionError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "ZeroDivisionError"
+    },
+    "jokes": [
+      "You divided by zero. Math itself just filed a complaint.",
+      "ZeroDivisionError: the universe declines to cooperate.",
+      "Dividing by zero is how black holes start. Please stop.",
+      "Even your calculator wouldn't do this.",
+      "This is the one error message every language agrees on hating."
+    ],
+    "fix": {
+      "summary": "Guard the divisor with a zero check before dividing.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime",
+      "math"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Division by zero. I've fixed this exact bug for three different interns this year.",
+        "You divided by zero. Add the guard clause. We both know you will, eventually."
+      ]
+    }
+  },
+  {
+    "id": "py-import-error-circular",
+    "language": "python",
+    "title": "ImportError: circular import",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ImportError: cannot import name '(\\w+)' from partially initialized module"
+    },
+    "slots": {
+      "1": "name"
+    },
+    "jokes": [
+      "'{name}' is stuck in a circular import loop with no way out.",
+      "Two modules are importing each other and now nobody wins.",
+      "This is an import ouroboros. It's eating its own tail.",
+      "'{name}' can't be imported because the module doing the importing is also being imported. Yes, really.",
+      "Circular imports: the Python equivalent of two people holding a door for each other forever."
+    ],
+    "fix": {
+      "summary": "Restructure imports to break the cycle, or move the import inside the function.",
+      "command": ""
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "import"
+    ]
+  },
+  {
+    "id": "py-file-not-found",
+    "language": "python",
+    "title": "FileNotFoundError",
+    "matcher": {
+      "type": "regex",
+      "pattern": "FileNotFoundError: \\[Errno 2\\] No such file or directory: '([^']+)'"
+    },
+    "slots": {
+      "1": "path"
+    },
+    "jokes": [
+      "'{path}' does not exist. You may have imagined it.",
+      "Python looked for '{path}' with real dedication and found nothing.",
+      "'{path}' is a work of fiction as far as your filesystem is concerned.",
+      "That file is not there. It was maybe never there.",
+      "'{path}': 404, this path could not be found in real life."
+    ],
+    "fix": {
+      "summary": "Check the path is correct and the file exists relative to your working directory.",
+      "command": "ls -la $(dirname {path})"
+    },
+    "personality_tag": "filesystem",
+    "tags": [
+      "filesystem"
+    ]
+  },
+  {
+    "id": "py-recursion-error",
+    "language": "python",
+    "title": "RecursionError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "RecursionError"
+    },
+    "jokes": [
+      "Your function called itself into oblivion.",
+      "RecursionError: it's recursion all the way down, then Python gives up.",
+      "You wrote a function that never wanted to stop calling itself.",
+      "This is what happens when you forget the base case.",
+      "Infinite recursion: technically a stack overflow with extra steps."
+    ],
+    "fix": {
+      "summary": "Add or fix the base case that should stop the recursion.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ]
+  },
+  {
+    "id": "py-value-error-int",
+    "language": "python",
+    "title": "ValueError: invalid literal for int()",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ValueError: invalid literal for int\\(\\) with base \\d+: '([^']*)'"
+    },
+    "slots": {
+      "1": "value"
+    },
+    "jokes": [
+      "'{value}' is not a number. It never was.",
+      "You tried to make '{value}' into an int through sheer force of will. It didn't work.",
+      "ValueError: '{value}' remains stubbornly non-numeric.",
+      "int('{value}') was always going to fail.",
+      "'{value}' identifies as a string and Python respects that."
+    ],
+    "fix": {
+      "summary": "Validate the string is numeric before calling int(), or wrap in try/except.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime",
+      "conversion"
+    ]
+  },
+  {
+    "id": "py-permission-error",
+    "language": "python",
+    "title": "PermissionError",
+    "matcher": {
+      "type": "exception_type",
+      "pattern": "PermissionError"
+    },
+    "jokes": [
+      "Your OS just said no.",
+      "PermissionError: the filesystem does not trust you today.",
+      "You don't have permission for that. Neither does anyone else, apparently.",
+      "Access denied, in the most literal way possible.",
+      "The filesystem gods have rejected your request."
+    ],
+    "fix": {
+      "summary": "Check file permissions or run with the correct user/privileges.",
+      "command": "ls -l {file}"
+    },
+    "personality_tag": "filesystem",
+    "tags": [
+      "filesystem",
+      "permissions"
+    ]
+  },
+  {
+    "id": "py-print-statement-python2",
+    "language": "python",
+    "title": "SyntaxError: Missing parentheses in call to 'print'",
+    "matcher": { "type": "regex", "pattern": "SyntaxError: Missing parentheses in call to 'print'" },
+    "jokes": [
+      "You wrote Python 2. This is Python 3. Time has moved on.",
+      "print is a function now. It has been for over a decade.",
+      "This code was written for a Python that has already reached end of life.",
+      "SyntaxError: your print statement is a museum piece.",
+      "Somewhere, a Python 2 tutorial from 2011 is still doing damage.",
+      "You forgot the parentheses. print() called, it wants its function syntax back."
+    ],
+    "fix": { "summary": "Wrap the print arguments in parentheses.", "command": "" },
+    "personality_tag": "syntax",
+    "tags": ["syntax", "python2"]
+  },
+  {
+    "id": "py-asyncio-event-loop-running",
+    "language": "python",
+    "title": "RuntimeError: This event loop is already running",
+    "matcher": { "type": "regex", "pattern": "RuntimeError: This event loop is already running" },
+    "jokes": [
+      "You tried to run an event loop inside an event loop. It's loops all the way down.",
+      "asyncio is already busy running things, and you just interrupted it rudely.",
+      "This event loop is already running, and it does not appreciate the company.",
+      "You called run_until_complete() from inside a coroutine. asyncio noticed.",
+      "Nested event loops: a bold move that asyncio will not allow.",
+      "The loop is already spinning. You cannot spin it again."
+    ],
+    "fix": { "summary": "Avoid nesting event loops; await the coroutine directly instead of calling run().", "command": "" },
+    "personality_tag": "async",
+    "tags": ["async", "runtime"]
+  },
+  {
+    "id": "py-asyncio-no-running-loop",
+    "language": "python",
+    "title": "RuntimeError: no running event loop",
+    "matcher": { "type": "regex", "pattern": "RuntimeError: no running event loop" },
+    "jokes": [
+      "You called an async function like it was a regular one. asyncio is unimpressed.",
+      "There is no event loop running. You skipped a step.",
+      "This needs an event loop and you brought none.",
+      "asyncio looked around for a loop to run in and found silence.",
+      "You forgot to actually start the async machinery before using it.",
+      "RuntimeError: the loop you assumed was running was never running."
+    ],
+    "fix": { "summary": "Run the coroutine with asyncio.run() or from within an active event loop.", "command": "" },
+    "personality_tag": "async",
+    "tags": ["async", "runtime"]
+  },
+  {
+    "id": "py-nonetype-attribute",
+    "language": "python",
+    "title": "TypeError: 'NoneType' object has no attribute",
+    "matcher": { "type": "regex", "pattern": "TypeError: 'NoneType' object has no attribute '(\\w+)'" },
+    "slots": { "1": "attr_name" },
+    "jokes": [
+      "Something returned None, and then you asked it for '.{attr_name}' anyway.",
+      "'.{attr_name}' on None: the most Python error of all Python errors.",
+      "You assumed that function would return something. It returned nothing, as promised by no one.",
+      "None does not have '.{attr_name}'. None does not have anything.",
+      "This is what happens when a function silently returns None and you don't check.",
+      "'.{attr_name}' of NoneType: the sequel nobody asked for, again."
+    ],
+    "fix": { "summary": "Trace back where the value became None and add a check before accessing it.", "command": "" },
+    "personality_tag": "reference",
+    "tags": ["runtime", "none"]
+  },
+  {
+    "id": "py-stop-iteration",
+    "language": "python",
+    "title": "StopIteration",
+    "matcher": { "type": "exception_type", "pattern": "StopIteration" },
+    "jokes": [
+      "You called next() one too many times. The iterator has nothing left to give.",
+      "StopIteration: the iterator's polite way of saying it's done.",
+      "This generator is exhausted, much like you are right now.",
+      "You kept asking for more, but the iterator already told you it was empty.",
+      "next() past the end of an iterator. There was never going to be a happy ending here.",
+      "The well is dry. So is this iterator."
+    ],
+    "fix": { "summary": "Catch StopIteration or use a for loop / default value with next() instead.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "iterator"]
+  },
+  {
+    "id": "py-address-already-in-use",
+    "language": "python",
+    "title": "OSError: Address already in use",
+    "matcher": { "type": "regex", "pattern": "OSError: \\[Errno (?:98|48)\\] Address already in use" },
+    "jokes": [
+      "Something else is already bound to that address. Probably your last unkilled process.",
+      "OSError: this address is already spoken for.",
+      "You started this server twice and forgot about the first one.",
+      "Address already in use: the socket equivalent of someone else's stuff in your seat.",
+      "This port has a tenant, and it isn't moving out on its own.",
+      "You need to evict whatever is already listening there."
+    ],
+    "fix": { "summary": "Find and stop the process already bound to that port, or use a different one.", "command": "lsof -i :{port}" },
+    "personality_tag": "network",
+    "tags": ["network", "server"]
+  },
+  {
+    "id": "py-pytest-collection-error",
+    "language": "python",
+    "title": "pytest: error collecting test module",
+    "matcher": { "type": "substring", "pattern": "ERROR collecting" },
+    "jokes": [
+      "pytest couldn't even load your test file, let alone run it.",
+      "This test module failed before a single test got the chance to fail properly.",
+      "Collection error: pytest gave up before the real disappointment could begin.",
+      "Your test file has a bug in it. The tests haven't even started yet.",
+      "pytest tried to import your test module and it fell apart immediately.",
+      "This is a bad import inside a test file, not a failing test. Different problem, same energy."
+    ],
+    "fix": { "summary": "Check the traceback for an import error or syntax error in the test file itself.", "command": "pytest --collect-only" },
+    "personality_tag": "testing",
+    "tags": ["testing", "pytest"]
+  },
+  {
+    "id": "py-unicode-decode-error",
+    "language": "python",
+    "title": "UnicodeDecodeError",
+    "matcher": { "type": "exception_type", "pattern": "UnicodeDecodeError" },
+    "jokes": [
+      "This file isn't the encoding you assumed it was. It never was.",
+      "UnicodeDecodeError: bytes and your assumed charset are not on speaking terms.",
+      "You told Python this was UTF-8. Python disagrees, loudly.",
+      "Somewhere out there is a file saved in an encoding from 2003.",
+      "This is what happens when you don't specify an encoding and hope for the best.",
+      "The bytes are real. Your assumption about what they mean is not."
+    ],
+    "fix": { "summary": "Open the file with the correct encoding, or detect it before reading.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "encoding"]
+  },
+  {
+    "id": "py-unsupported-operand",
+    "language": "python",
+    "title": "TypeError: unsupported operand type(s)",
+    "matcher": { "type": "regex", "pattern": "TypeError: unsupported operand type\\(s\\) for \\+: '(\\w+)' and '(\\w+)'" },
+    "slots": { "1": "left_type", "2": "right_type" },
+    "jokes": [
+      "You can't add a '{left_type}' and a '{right_type}'. Math has rules.",
+      "'{left_type}' + '{right_type}' is not defined, and neither is your type discipline.",
+      "This is what happens when you assume everything is secretly a string. Or a number. Whichever it wasn't.",
+      "Python refuses to guess how to combine a '{left_type}' and a '{right_type}'.",
+      "You mixed types like a smoothie and Python is not blending.",
+      "'{left_type}' and '{right_type}' were never meant to be added together."
+    ],
+    "fix": { "summary": "Convert both operands to a common type before combining them.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "types"]
+  },
+  {
+    "id": "py-json-decode-error",
+    "language": "python",
+    "title": "json.decoder.JSONDecodeError",
+    "matcher": { "type": "exception_type", "pattern": "JSONDecodeError" },
+    "jokes": [
+      "That string is not JSON. It just kind of looks like it.",
+      "json.loads() met your input and immediately regretted it.",
+      "Whatever you're parsing is not valid JSON, no matter how much you want it to be.",
+      "This is what happens when an API returns HTML for an error and you parse it as JSON anyway.",
+      "The JSON parser choked. Probably on a trailing comma or an empty response.",
+      "Somewhere in that payload is a syntax mistake, or it's just not JSON at all."
+    ],
+    "fix": { "summary": "Print the raw response/string before parsing to see what was actually returned.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "json"]
+  },
+  {
+    "id": "py-relative-import-no-parent",
+    "language": "python",
+    "title": "ImportError: attempted relative import with no known parent package",
+    "matcher": { "type": "regex", "pattern": "ImportError: attempted relative import with no known parent package" },
+    "jokes": [
+      "You ran a module directly that expected to be part of a package. It wasn't.",
+      "Relative imports need a package structure, and you just ran a lone script.",
+      "This file doesn't know it's supposed to be part of something bigger.",
+      "You used a dot-import outside of any package context. Python has no idea what you meant.",
+      "Running this file directly broke the illusion that it was ever a package member.",
+      "Relative imports work great, right up until you run the file standalone."
+    ],
+    "fix": { "summary": "Run the module with -m from the package root instead of executing the file directly.", "command": "python -m {module}" },
+    "personality_tag": "dependency",
+    "tags": ["import"]
+  },
+  {
+    "id": "py-unbound-local-error",
+    "language": "python",
+    "title": "UnboundLocalError",
+    "matcher": { "type": "regex", "pattern": "UnboundLocalError: local variable '(\\w+)' referenced before assignment" },
+    "slots": { "1": "name" },
+    "jokes": [
+      "'{name}' is local, and you used it before it had a value. Scoping strikes again.",
+      "You assigned to '{name}' somewhere in this function, which made Python treat it as local everywhere.",
+      "'{name}' exists, but not yet, not here, not like this.",
+      "This is the classic 'assigned later in the function so it shadows the outer scope' bug.",
+      "'{name}' was referenced before assignment because Python decided it was local the moment you touched it anywhere.",
+      "You wanted the global '{name}'. Python gave you scoping rules instead."
+    ],
+    "fix": { "summary": "Use the global/nonlocal keyword, or rename the local variable to avoid shadowing.", "command": "" },
+    "personality_tag": "reference",
+    "tags": ["runtime", "scope"]
+  },
+  {
+    "id": "py-assertion-error",
+    "language": "python",
+    "title": "AssertionError",
+    "matcher": { "type": "exception_type", "pattern": "AssertionError" },
+    "jokes": [
+      "You asserted something that wasn't true. The assertion was right to complain.",
+      "AssertionError: reality did not match your expectations.",
+      "This assert statement caught exactly what it was written to catch. Working as intended.",
+      "Your assumption failed its own test.",
+      "The code checked itself and did not like what it found.",
+      "assert is doing its job. Your logic is the one that failed."
+    ],
+    "fix": { "summary": "Check the condition being asserted and the actual value at that point.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "testing"]
+  },
+  {
+    "id": "py-memory-error",
+    "language": "python",
+    "title": "MemoryError",
+    "matcher": { "type": "exception_type", "pattern": "MemoryError" },
+    "jokes": [
+      "You asked Python to hold more than the machine has to give.",
+      "MemoryError: you built something enormous and the RAM said enough.",
+      "This is what happens when you load the entire dataset into memory at once.",
+      "Your process just asked for more memory than exists. Bold request.",
+      "The machine ran out of RAM trying to satisfy your data structure.",
+      "This was always going to happen eventually. Today was the day."
+    ],
+    "fix": { "summary": "Process the data in chunks/streams instead of loading it all into memory.", "command": "" },
+    "personality_tag": "resource",
+    "tags": ["runtime", "memory"]
+  },
+  {
+    "id": "py-broken-pipe-error",
+    "language": "python",
+    "title": "BrokenPipeError",
+    "matcher": { "type": "exception_type", "pattern": "BrokenPipeError" },
+    "jokes": [
+      "The other end of this pipe hung up, and you kept writing to it anyway.",
+      "BrokenPipeError: nobody is listening on the other side anymore.",
+      "You piped output to something that closed early. It happens.",
+      "The reader left. The writer did not get the memo.",
+      "This is what happens when you `| head` a program that keeps producing output.",
+      "The pipe is broken because the process on the other end quit without telling you."
+    ],
+    "fix": { "summary": "Handle the broken pipe gracefully, or check why the downstream process exited early.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "io"]
+  },
+  {
+    "id": "py-import-error-version-mismatch",
+    "language": "python",
+    "title": "ImportError: cannot import name from module (version mismatch)",
+    "matcher": { "type": "regex", "pattern": "ImportError: cannot import name '(\\w+)' from '([\\w.]+)'" },
+    "slots": { "1": "name", "2": "module_name" },
+    "jokes": [
+      "'{name}' doesn't exist in the '{module_name}' you actually have installed.",
+      "You're expecting an API from '{module_name}' that a different version provides.",
+      "'{name}' was removed, renamed, or never existed in this version of '{module_name}'.",
+      "This is what happens when your requirements.txt and reality disagree on versions.",
+      "Somewhere between the docs you read and the package you installed, '{name}' vanished.",
+      "'{module_name}' changed its API and nobody told this codebase."
+    ],
+    "fix": { "summary": "Check the installed version of the package matches what the code expects.", "command": "pip show {module_name}" },
+    "personality_tag": "dependency",
+    "tags": ["import", "dependency"]
+  }
+]
