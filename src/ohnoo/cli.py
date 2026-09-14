@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
+import sysconfig
 from pathlib import Path
 
 import click
@@ -134,19 +136,61 @@ def init(shell: str, uninstall: bool) -> None:
         sys.exit(1)
 
     if uninstall:
-        path, removed = installer.uninstall()
-        if removed:
-            click.echo(f"ohnoo hook removed from {path}. Restart your shell or re-source it.")
-        else:
-            click.echo(f"ohnoo hook not found in {path}. Nothing to do.")
+        for path, removed in installer.uninstall():
+            if removed:
+                click.echo(f"ohnoo hook removed from {path}. Restart your shell or re-source it.")
+            else:
+                click.echo(f"ohnoo hook not found in {path}. Nothing to do.")
         return
 
-    path, installed = installer.install()
+    for path, installed in installer.install():
+        if installed:
+            click.echo(f"ohnoo hook installed in {path}. Restart your shell or re-source it to activate.")
+        else:
+            click.echo(f"ohnoo hook already present in {path}. Nothing to do.")
 
-    if installed:
-        click.echo(f"ohnoo hook installed in {path}. Restart your shell or re-source it to activate.")
+    path_warning = _check_ohnoo_on_path()
+    if path_warning:
+        click.echo(click.style("ohnoo: warning: ", fg="yellow", bold=True) + path_warning)
+
+
+def _check_ohnoo_on_path() -> str | None:
+    """Warn if the hook just installed won't actually be able to find `ohnoo`.
+
+    pip commonly installs console-script shims into a per-user scripts
+    directory that isn't on PATH by default (most visibly on Windows with a
+    non-venv `pip install`). The shell hooks wrap `ohnoo check` in a
+    catch-everything guard specifically so a *missing agent CLI* (Layer 2)
+    never breaks the user's prompt -- but that guard is indiscriminate, so
+    it also silently swallows a missing `ohnoo` itself, with zero signal to
+    the user that anything is wrong. Catching that here, once, at install
+    time -- while the user is already looking at this terminal -- beats
+    them discovering it days later by noticing nothing ever happens.
+
+    Returns None if `ohnoo` resolves normally (the common case), or a
+    ready-to-run fix if it doesn't and we can locate where it actually is.
+    """
+    if shutil.which("ohnoo") is not None:
+        return None
+
+    scripts_dir = Path(sysconfig.get_path("scripts"))
+    exe_name = "ohnoo.exe" if os.name == "nt" else "ohnoo"
+    if not (scripts_dir / exe_name).exists():
+        return None  # can't point at a specific fix; don't guess
+
+    if os.name == "nt":
+        fix = f'[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";{scripts_dir}", "User")'
     else:
-        click.echo(f"ohnoo hook already present in {path}. Nothing to do.")
+        fix = f"echo 'export PATH=\"{scripts_dir}:$PATH\"' >> ~/.profile"
+
+    return (
+        f"'ohnoo' isn't on your PATH right now ({scripts_dir} isn't in it), so the "
+        "hook just installed won't be able to find it -- it'll silently do nothing "
+        "on every crash. Fix with:\n"
+        f"  {fix}\n"
+        "then open a new terminal window. (Or reinstall with `pipx install ohnoo`, "
+        "which manages PATH for you.)"
+    )
 
 
 def _detect_shell() -> str:

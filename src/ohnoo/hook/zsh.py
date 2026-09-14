@@ -45,10 +45,10 @@ def _rc_path() -> Path:
     return Path(override).expanduser() if override else Path(RC_FILE).expanduser()
 
 
-def install() -> tuple[Path, bool]:
-    return install_block(_rc_path(), _BODY)
+def install() -> list[tuple[Path, bool]]:
+    return [install_block(_rc_path(), _BODY)]
 
 
-def uninstall() -> tuple[Path, bool]:
+def uninstall() -> list[tuple[Path, bool]]:
     rc_path = _rc_path()
-    return rc_path, uninstall_block(rc_path)
+    return [(rc_path, uninstall_block(rc_path))]

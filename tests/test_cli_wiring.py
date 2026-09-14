@@ -26,7 +26,9 @@ def test_pipe_mode_matched_error_saves_stats_and_last_roast(tmp_path, monkeypatc
     result = runner.invoke(main, [], input="ModuleNotFoundError: No module named 'requests'\n")
     assert result.exit_code == 0
     assert "requests" in result.output
-    assert "pip install requests" in result.output
+    # Fix commands are shell-quoted so a pasted slot value can't inject
+    # shell syntax -- see _fill_command() in patterns/__init__.py.
+    assert "pip install 'requests'" in result.output
 
     from ohnoo import stats
 

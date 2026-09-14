@@ -30,6 +30,8 @@ pip install ohnoo && ohnoo init
 
 That's the whole setup. No account, no API key, no config file to write.
 
+> Prefer `pipx install ohnoo && ohnoo init` if you have [pipx](https://pipx.pypa.io/) — it keeps `ohnoo` on your PATH automatically. Plain `pip install` sometimes doesn't (most commonly on Windows with a `--user` install); `ohnoo init` will tell you exactly what to fix if that happens to you.
+
 ## See it happen
 
 ```text
