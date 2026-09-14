@@ -1,0 +1,26 @@
+{
+  "name": "ohnoo",
+  "version": "0.1.0",
+  "description": "A terminal companion that catches your crash, roasts it in one funny line, and fixes it for you.",
+  "bin": {
+    "ohnoo": "./bin/ohnoo.js"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node bin/postinstall.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aashutosh-Mahajan/ohnoo.git"
+  },
+  "homepage": "https://github.com/Aashutosh-Mahajan/ohnoo",
+  "bugs": "https://github.com/Aashutosh-Mahajan/ohnoo/issues",
+  "engines": {
+    "node": ">=16"
+  }
+}
