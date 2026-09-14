@@ -1,0 +1,482 @@
+[
+  {
+    "id": "docker-daemon-not-running",
+    "language": "docker",
+    "title": "Cannot connect to the Docker daemon",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Cannot connect to the Docker daemon"
+    },
+    "jokes": [
+      "Docker Desktop isn't running. It never is, when you need it.",
+      "The Docker daemon is asleep and you didn't wake it up.",
+      "You ran a docker command with no daemon listening. Classic.",
+      "Docker is not running. Have you tried turning it on?",
+      "This is the docker equivalent of yelling into an empty room."
+    ],
+    "fix": {
+      "summary": "Start Docker Desktop or the docker daemon service.",
+      "command": "open -a Docker"
+    },
+    "personality_tag": "setup",
+    "tags": [
+      "setup"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Docker Desktop isn't running. It never is. Start it and try again like the rest of us.",
+        "The daemon's down. Open Docker Desktop, wait the obligatory thirty seconds, retry."
+      ]
+    }
+  },
+  {
+    "id": "docker-port-already-allocated",
+    "language": "docker",
+    "title": "port is already allocated",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Bind for [\\d.]+:(\\d+) failed: port is already allocated"
+    },
+    "slots": {
+      "1": "port"
+    },
+    "jokes": [
+      "Port {port} is already claimed by another container. Or the last one you forgot to stop.",
+      "You have a zombie container squatting on port {port}.",
+      "Port {port} is taken, probably by yesterday's forgotten `docker run`.",
+      "This container wants port {port}, but so does something you already started.",
+      "You have too many containers and not enough ports."
+    ],
+    "fix": {
+      "summary": "Stop the container using that port, or map to a different one.",
+      "command": "docker ps --filter publish={port}"
+    },
+    "personality_tag": "network",
+    "tags": [
+      "network"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Port {port} is already bound. Probably to the container you forgot to stop last time.",
+        "Something's already on {port}. docker ps will tell you what. Check before you complain."
+      ]
+    }
+  },
+  {
+    "id": "docker-image-not-found",
+    "language": "docker",
+    "title": "pull access denied / image not found",
+    "matcher": {
+      "type": "regex",
+      "pattern": "pull access denied for ([\\w./-]+)"
+    },
+    "slots": {
+      "1": "image"
+    },
+    "jokes": [
+      "'{image}' doesn't exist, or it's private and you're not invited.",
+      "Docker Hub has no idea what '{image}' is.",
+      "You're pulling '{image}' and getting nothing but rejection.",
+      "That image name is either misspelled or belongs to someone else's registry.",
+      "'{image}': pull denied, dreams denied."
+    ],
+    "fix": {
+      "summary": "Check the image name/tag, and log in if it's a private registry.",
+      "command": "docker login"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "dependency"
+    ]
+  },
+  {
+    "id": "docker-no-space-left",
+    "language": "docker",
+    "title": "no space left on device",
+    "matcher": {
+      "type": "regex",
+      "pattern": "no space left on device"
+    },
+    "jokes": [
+      "Docker has quietly eaten your entire disk with old layers.",
+      "No space left on device: every image you never pruned is now haunting you.",
+      "Your disk is full of dangling images from six months ago.",
+      "This is what happens when you never run docker system prune.",
+      "Docker's cache grew into a monster and it just ate your free space."
+    ],
+    "fix": {
+      "summary": "Prune unused Docker images, containers, and volumes.",
+      "command": "docker system prune -af"
+    },
+    "personality_tag": "resource",
+    "tags": [
+      "resource"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "No disk space left. Docker's been hoarding old images and layers for months. Run a prune.",
+        "You're out of space. This happens to everyone who's never run docker system prune."
+      ]
+    }
+  },
+  {
+    "id": "docker-container-exited-nonzero",
+    "language": "docker",
+    "title": "container exited with non-zero code",
+    "matcher": {
+      "type": "regex",
+      "pattern": "exited with code (\\d+)"
+    },
+    "slots": {
+      "1": "code"
+    },
+    "jokes": [
+      "Your container exited with code {code}. It had thoughts and they were bad.",
+      "Exit code {code}: the container's way of saying something went wrong inside.",
+      "That container ran, then immediately regretted it. Exit {code}.",
+      "Container exit code {code}. Time to check the logs.",
+      "The entrypoint failed and left exit code {code} as evidence."
+    ],
+    "fix": {
+      "summary": "Check the container logs for the real error.",
+      "command": "docker logs <container>"
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ]
+  },
+  {
+    "id": "npm-eresolve",
+    "language": "npm",
+    "title": "npm ERR! ERESOLVE",
+    "matcher": {
+      "type": "regex",
+      "pattern": "npm ERR! ERESOLVE"
+    },
+    "jokes": [
+      "npm found conflicting dependency requirements and gave up trying to guess.",
+      "ERESOLVE: your dependency tree is arguing with itself.",
+      "Two packages want different versions of the same thing. npm refuses to referee.",
+      "This is the price of a deep and tangled node_modules tree.",
+      "npm's dependency resolver just threw its hands up."
+    ],
+    "fix": {
+      "summary": "Resolve manually, or retry with --legacy-peer-deps if appropriate.",
+      "command": "npm install --legacy-peer-deps"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "dependency"
+    ]
+  },
+  {
+    "id": "npm-enoent-package-json",
+    "language": "npm",
+    "title": "ENOENT: no such file or directory, open 'package.json'",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ENOENT.*package\\.json"
+    },
+    "jokes": [
+      "There's no package.json here. You're not in a Node project, or not in the right folder.",
+      "npm looked for package.json and found empty air.",
+      "This directory has no package.json. It never claimed to be a Node project.",
+      "You ran npm somewhere that isn't a Node project. Bold move.",
+      "package.json is missing. So is the plan."
+    ],
+    "fix": {
+      "summary": "cd into the project root, or run npm init if starting fresh.",
+      "command": "npm init -y"
+    },
+    "personality_tag": "setup",
+    "tags": [
+      "setup"
+    ]
+  },
+  {
+    "id": "npm-permission-denied-global",
+    "language": "npm",
+    "title": "EACCES permission denied",
+    "matcher": {
+      "type": "regex",
+      "pattern": "npm ERR! code EACCES"
+    },
+    "jokes": [
+      "npm wants root, or at least ownership of its own directories.",
+      "EACCES: npm's global install directory doesn't trust you.",
+      "You tried a global install without the right permissions. Classic npm rite of passage.",
+      "Permission denied. npm's global folder has trust issues, usually because you once used sudo.",
+      "This is the direct result of installing Node with sudo at some point in your life."
+    ],
+    "fix": {
+      "summary": "Fix npm's global directory ownership rather than using sudo.",
+      "command": "npm config get prefix"
+    },
+    "personality_tag": "permissions",
+    "tags": [
+      "permissions"
+    ]
+  },
+  {
+    "id": "pip-could-not-find-version",
+    "language": "pip",
+    "title": "Could not find a version that satisfies the requirement",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Could not find a version that satisfies the requirement ([\\w.\\-\\[\\]]+)"
+    },
+    "slots": {
+      "1": "package"
+    },
+    "jokes": [
+      "'{package}' doesn't exist on PyPI, at least not with that name or version.",
+      "pip searched everywhere for '{package}' and found nothing that fits.",
+      "'{package}': not on PyPI, not in your Python version's compatibility range, not happening.",
+      "You asked pip for a version of '{package}' that simply isn't published.",
+      "This is either a typo or a version that was never released."
+    ],
+    "fix": {
+      "summary": "Check the package name/version and your Python version compatibility.",
+      "command": "pip index versions {package}"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "dependency"
+    ]
+  },
+  {
+    "id": "pip-externally-managed-environment",
+    "language": "pip",
+    "title": "externally-managed-environment",
+    "matcher": {
+      "type": "regex",
+      "pattern": "externally-managed-environment"
+    },
+    "jokes": [
+      "Your system Python is protected from itself, and now from you too.",
+      "pip refuses to install globally into a system-managed Python. This is a feature.",
+      "Modern Python is tired of you breaking your OS packages. Use a venv.",
+      "This is PEP 668 telling you, politely but firmly, to use a virtual environment.",
+      "System Python said no. It's not personal, it's PEP 668."
+    ],
+    "fix": {
+      "summary": "Use a virtual environment instead of installing into system Python.",
+      "command": "python -m venv .venv && source .venv/bin/activate"
+    },
+    "personality_tag": "setup",
+    "tags": [
+      "setup",
+      "venv"
+    ]
+  },
+  {
+    "id": "docker-compose-version-mismatch",
+    "language": "docker",
+    "title": "docker-compose version unsupported",
+    "matcher": { "type": "regex", "pattern": "Version in \".*docker-compose\\.ya?ml\" is unsupported" },
+    "jokes": [
+      "Your compose file claims a version that this Compose install has never heard of.",
+      "docker-compose and your compose.yml disagree on what year it is.",
+      "That version key is either too old or too new for the Compose binary you have.",
+      "This is a compatibility mismatch between the compose spec and your installed tooling.",
+      "Someone wrote this file for a different Compose than the one running it.",
+      "The compose file version and the compose CLI version are not on speaking terms."
+    ],
+    "fix": { "summary": "Update the compose file's version key, or install a Compose version that supports it.", "command": "docker compose version" },
+    "personality_tag": "setup",
+    "tags": ["setup", "compose"]
+  },
+  {
+    "id": "docker-volume-mount-permission-denied",
+    "language": "docker",
+    "title": "volume mount permission denied",
+    "matcher": { "type": "regex", "pattern": "Error response from daemon: .*: permission denied" },
+    "jokes": [
+      "The container can see the mounted volume, but it isn't allowed to touch it.",
+      "Permission denied inside the container, because the host and container users disagree on ownership.",
+      "This is the classic UID mismatch between your host user and the container's user.",
+      "Docker mounted the volume just fine. The permissions came along for the ride, unfortunately.",
+      "Your bind mount works. Reading or writing to it does not.",
+      "Somewhere, a chmod or a matching UID would have prevented this entirely."
+    ],
+    "fix": { "summary": "Match the container user's UID/GID to the host, or adjust the mounted directory's permissions.", "command": "" },
+    "personality_tag": "permissions",
+    "tags": ["permissions", "volume"]
+  },
+  {
+    "id": "docker-network-not-found",
+    "language": "docker",
+    "title": "network not found",
+    "matcher": { "type": "regex", "pattern": "Error response from daemon: network ([\\w-]+) not found" },
+    "slots": { "1": "network" },
+    "jokes": [
+      "The network '{network}' doesn't exist. Someone removed it, or it was never created.",
+      "You're trying to attach to '{network}', which is not a real network right now.",
+      "'{network}' was probably torn down by a docker-compose down at some point.",
+      "This container wants to join '{network}' and '{network}' isn't home.",
+      "Docker networks don't persist by magic. '{network}' needs to be created first.",
+      "'{network}' not found: check for a typo or a missing docker network create."
+    ],
+    "fix": { "summary": "Create the network, or bring up the compose stack that defines it.", "command": "docker network create {network}" },
+    "personality_tag": "network",
+    "tags": ["network"]
+  },
+  {
+    "id": "npm-404-not-found",
+    "language": "npm",
+    "title": "npm ERR! 404 Not Found",
+    "matcher": { "type": "regex", "pattern": "npm ERR! 404 Not Found - GET (\\S+)" },
+    "slots": { "1": "url" },
+    "jokes": [
+      "npm asked the registry for '{url}' and got a 404 for its trouble.",
+      "That package doesn't exist on the registry, or its name is misspelled.",
+      "'{url}': the registry has never heard of this package.",
+      "This is either a typo, an unpublished package, or a private package you're not logged into.",
+      "npm went looking at '{url}' and found nothing but a 404.",
+      "The registry says no such package exists. It's usually right."
+    ],
+    "fix": { "summary": "Check the package name for typos, or log in if it's a private package.", "command": "npm login" },
+    "personality_tag": "dependency",
+    "tags": ["dependency"]
+  },
+  {
+    "id": "npm-missing-script",
+    "language": "npm",
+    "title": "npm ERR! missing script",
+    "matcher": { "type": "regex", "pattern": "npm ERR! missing script: (\\S+)" },
+    "slots": { "1": "script" },
+    "jokes": [
+      "There is no '{script}' script in package.json. You made that name up just now.",
+      "npm run '{script}' assumes '{script}' exists. It does not.",
+      "Check package.json's scripts block, because '{script}' is not in it.",
+      "'{script}' is not a real npm script, no matter how confidently you typed it.",
+      "This project has scripts. '{script}' is simply not one of them.",
+      "You ran a script that was never defined. npm is just the messenger."
+    ],
+    "fix": { "summary": "Check the scripts block in package.json for the correct script name.", "command": "npm run" },
+    "personality_tag": "setup",
+    "tags": ["setup"]
+  },
+  {
+    "id": "npm-engine-mismatch",
+    "language": "npm",
+    "title": "npm ERR! unsupported engine",
+    "matcher": { "type": "regex", "pattern": "npm ERR! (?:code EBADENGINE|engine Unsupported engine)" },
+    "jokes": [
+      "This package wants a Node version you don't currently have.",
+      "EBADENGINE: your Node version and this package's requirements don't match.",
+      "Somewhere in package.json, an engines field is judging your Node install.",
+      "This is what happens when the project was built against a newer, or older, Node.",
+      "Your Node version is technically wrong for this package, according to the package itself.",
+      "The engines field exists specifically to produce this error."
+    ],
+    "fix": { "summary": "Switch to the Node version this package expects, e.g. with nvm.", "command": "nvm use" },
+    "personality_tag": "dependency",
+    "tags": ["dependency", "node"]
+  },
+  {
+    "id": "npm-ci-lockfile-out-of-sync",
+    "language": "npm",
+    "title": "npm ci: package.json and lockfile out of sync",
+    "matcher": { "type": "regex", "pattern": "npm ERR! `npm ci` can only install packages when your package\\.json and package-lock\\.json" },
+    "jokes": [
+      "package.json changed and nobody regenerated the lockfile. npm ci noticed immediately.",
+      "This is npm ci doing exactly what it's designed to do: refuse to guess.",
+      "Your lockfile and package.json disagree, and CI mode does not tolerate disagreement.",
+      "Someone edited a dependency by hand without running npm install afterward.",
+      "npm ci is strict on purpose. Your lockfile just failed that strictness test.",
+      "This is the reason lockfiles exist, and also the reason they get out of sync."
+    ],
+    "fix": { "summary": "Run npm install to regenerate the lockfile, then commit it.", "command": "npm install" },
+    "personality_tag": "dependency",
+    "tags": ["dependency", "ci"]
+  },
+  {
+    "id": "pip-unsupported-wheel-platform",
+    "language": "pip",
+    "title": "is not a supported wheel on this platform",
+    "matcher": { "type": "substring", "pattern": "is not a supported wheel on this platform" },
+    "jokes": [
+      "That wheel was built for a different OS, architecture, or Python version than yours.",
+      "This binary package simply was not made for the machine you're running.",
+      "The wheel exists. It just doesn't exist for your platform.",
+      "Someone built this for a different CPU architecture, and it shows.",
+      "pip found the package but not a build that matches your setup.",
+      "This is what cross-platform wheel mismatches look like in practice."
+    ],
+    "fix": { "summary": "Check for a wheel matching your Python version/platform, or install from source.", "command": "pip install --no-binary :all: <package>" },
+    "personality_tag": "dependency",
+    "tags": ["dependency", "wheel"]
+  },
+  {
+    "id": "pip-ssl-certificate-verify-failed",
+    "language": "pip",
+    "title": "SSL: CERTIFICATE_VERIFY_FAILED",
+    "matcher": { "type": "substring", "pattern": "CERTIFICATE_VERIFY_FAILED" },
+    "jokes": [
+      "pip doesn't trust the certificate chain between you and PyPI right now.",
+      "This is a corporate proxy, an expired cert, or a misconfigured trust store. Pick one.",
+      "SSL verification failed, which is usually a sign something is intercepting your traffic.",
+      "pip refuses to talk to a server it can't verify. That's the correct instinct.",
+      "Somewhere between you and the package index, a certificate stopped checking out.",
+      "This is your OS's trust store having a disagreement with PyPI's certificate."
+    ],
+    "fix": { "summary": "Fix your system's certificate trust store, or configure the correct proxy/CA bundle.", "command": "" },
+    "personality_tag": "network",
+    "tags": ["network", "ssl"]
+  },
+  {
+    "id": "pip-requirements-file-not-found",
+    "language": "pip",
+    "title": "Could not open requirements file",
+    "matcher": { "type": "regex", "pattern": "ERROR: Could not open requirements file.*No such file or directory: '([^']+)'" },
+    "slots": { "1": "path" },
+    "jokes": [
+      "'{path}' doesn't exist. Neither does the install you were hoping for.",
+      "pip looked for '{path}' and found nothing but a wrong working directory.",
+      "You're not in the folder you think you're in, and '{path}' proves it.",
+      "'{path}' is a path to nowhere, as far as pip is concerned.",
+      "This is usually a wrong directory, not a missing file.",
+      "requirements.txt exists somewhere. Just not at '{path}'."
+    ],
+    "fix": { "summary": "Check you're in the right directory and the requirements file name is correct.", "command": "ls {path}" },
+    "personality_tag": "setup",
+    "tags": ["setup", "filesystem"]
+  },
+  {
+    "id": "pip-broken-pip-import-main",
+    "language": "pip",
+    "title": "ImportError: cannot import name 'main' from 'pip'",
+    "matcher": { "type": "regex", "pattern": "ImportError: cannot import name 'main' from 'pip'" },
+    "jokes": [
+      "Something is calling pip's old internal API, which stopped existing several major versions ago.",
+      "pip.main() was removed years ago and this script never got the memo.",
+      "This is a script written for an ancient pip, running against a modern one.",
+      "pip's internals are not a public API, and this is exactly why that rule exists.",
+      "You upgraded pip and broke a script that was quietly relying on its guts.",
+      "This has been broken since pip stopped exposing main() directly. That was a while ago."
+    ],
+    "fix": { "summary": "Update the script to call pip via subprocess (python -m pip) instead of importing its internals.", "command": "python -m pip --version" },
+    "personality_tag": "dependency",
+    "tags": ["dependency"]
+  },
+  {
+    "id": "pip-no-matching-distribution",
+    "language": "pip",
+    "title": "No matching distribution found",
+    "matcher": { "type": "regex", "pattern": "ERROR: No matching distribution found for ([\\w.\\-\\[\\]]+)" },
+    "slots": { "1": "package" },
+    "jokes": [
+      "'{package}' has no distribution that fits your Python version or platform.",
+      "pip searched every index it knows and '{package}' just isn't there for you.",
+      "This is either a typo, a private package with no index configured, or a genuine gap.",
+      "'{package}' exists somewhere, probably. Not somewhere pip can currently reach.",
+      "No matching distribution: the more mysterious cousin of package-not-found.",
+      "Check your index URL, because '{package}' might just be on a different one."
+    ],
+    "fix": { "summary": "Check the package name, your Python version, and any custom index URLs.", "command": "pip install --index-url https://pypi.org/simple {package}" },
+    "personality_tag": "dependency",
+    "tags": ["dependency"]
+  }
+]
