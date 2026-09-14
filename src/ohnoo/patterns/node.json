@@ -1,0 +1,679 @@
+[
+  {
+    "id": "node-eaddrinuse",
+    "language": "node",
+    "title": "EADDRINUSE",
+    "matcher": {
+      "type": "regex",
+      "pattern": "EADDRINUSE.*:(\\d+)"
+    },
+    "slots": {
+      "1": "port"
+    },
+    "jokes": [
+      "Port {port} is already taken. By you. Twenty minutes ago.",
+      "Something's already squatting on port {port} and it's probably your last unkilled process.",
+      "EADDRINUSE: port {port} called dibs first.",
+      "You started this server so many times port {port} filed a restraining order.",
+      "Port {port} is occupied. Have you tried turning it off? The old one, I mean.",
+      "There's a zombie process on port {port} and only you can kill it."
+    ],
+    "fix": {
+      "summary": "Find and kill the process holding the port, or use a different port.",
+      "command": "lsof -ti :{port} | xargs kill -9"
+    },
+    "personality_tag": "network",
+    "tags": [
+      "network",
+      "server"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Port {port} is taken. Probably by the zombie process from your last crash. kill it and move on.",
+        "EADDRINUSE on {port}. This is the fourth time this week, isn't it."
+      ]
+    }
+  },
+  {
+    "id": "node-cannot-find-module",
+    "language": "node",
+    "title": "Cannot find module",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Error: Cannot find module '([^']+)'"
+    },
+    "slots": {
+      "1": "module_name"
+    },
+    "jokes": [
+      "'{module_name}' isn't installed. node_modules remains a mystery box.",
+      "You required '{module_name}' on pure faith.",
+      "Cannot find module '{module_name}': have you tried it existing?",
+      "'{module_name}' is not in node_modules, which continues to be a 40,000-file black hole with nothing you need.",
+      "Node looked for '{module_name}' and came back empty-handed.",
+      "This module was never installed. This is the whole problem."
+    ],
+    "fix": {
+      "summary": "Install the missing package.",
+      "command": "npm install {module_name}"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "import",
+      "dependency"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "'{module_name}' isn't installed. Run the install command. I promise it's still npm install.",
+        "Missing module '{module_name}'. Did you even run npm install after pulling?"
+      ]
+    }
+  },
+  {
+    "id": "node-undefined-not-a-function",
+    "language": "node",
+    "title": "TypeError: x is not a function",
+    "matcher": {
+      "type": "regex",
+      "pattern": "TypeError: ([\\w.]+) is not a function"
+    },
+    "slots": {
+      "1": "expr"
+    },
+    "jokes": [
+      "'{expr}' is not a function. It's not anything, really.",
+      "You called '{expr}()' like it was going to do something.",
+      "'{expr}' is not a function, it's a cry for help.",
+      "TypeError: '{expr}' never agreed to be callable.",
+      "This is what happens when you assume the import worked."
+    ],
+    "fix": {
+      "summary": "Check the import/require is correct and the value is actually a function.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "'{expr}' is not a function. Maybe check what it actually is before calling it next time.",
+        "Calling '{expr}' like it's a function was optimistic. It wasn't."
+      ]
+    }
+  },
+  {
+    "id": "node-cannot-read-property-of-undefined",
+    "language": "node",
+    "title": "Cannot read properties of undefined",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Cannot read propert(?:y|ies) '?(\\w*)'? of undefined"
+    },
+    "slots": {
+      "1": "prop"
+    },
+    "jokes": [
+      "You reached into undefined looking for '.{prop}'. It wasn't there. Nothing was there.",
+      "'.{prop}' of undefined: the most-filed bug report in JavaScript history.",
+      "undefined doesn't have properties. This is not new information.",
+      "You assumed that value existed. JavaScript disagreed, loudly.",
+      "This is basically JavaScript's national anthem at this point."
+    ],
+    "fix": {
+      "summary": "Add a null/undefined check or optional chaining before accessing the property.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ]
+  },
+  {
+    "id": "node-unhandled-promise-rejection",
+    "language": "node",
+    "title": "UnhandledPromiseRejection",
+    "matcher": {
+      "type": "regex",
+      "pattern": "UnhandledPromiseRejection"
+    },
+    "jokes": [
+      "You threw a promise into the void with no .catch() to save it.",
+      "This promise rejected and nobody was there to hear it.",
+      "UnhandledPromiseRejection: async code, unhandled consequences.",
+      "You forgot the .catch(). Every time. Forever.",
+      "This is what happens when await doesn't get a try/catch."
+    ],
+    "fix": {
+      "summary": "Add a .catch() handler or wrap the await in try/catch.",
+      "command": ""
+    },
+    "personality_tag": "async",
+    "tags": [
+      "async",
+      "runtime"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "No .catch(), no try/catch, no plan. This is why we do code review.",
+        "An unhandled rejection. I've flagged this exact pattern in every PR you've ever sent me."
+      ]
+    }
+  },
+  {
+    "id": "node-syntax-error-unexpected-token",
+    "language": "node",
+    "title": "SyntaxError: Unexpected token",
+    "matcher": {
+      "type": "regex",
+      "pattern": "SyntaxError: Unexpected token '?([^\\s']*)'?"
+    },
+    "slots": {
+      "1": "token"
+    },
+    "jokes": [
+      "Node choked on '{token}'. Fair reaction, honestly.",
+      "SyntaxError: '{token}' was not invited to this parse.",
+      "'{token}' broke the parser. Impressive, in a bad way.",
+      "That token is in the wrong place, wrong file, or wrong universe.",
+      "Node saw '{token}' and gave up immediately."
+    ],
+    "fix": {
+      "summary": "Check for a stray character, missing bracket, or unsupported syntax for your Node version.",
+      "command": ""
+    },
+    "personality_tag": "syntax",
+    "tags": [
+      "syntax"
+    ]
+  },
+  {
+    "id": "node-enoent",
+    "language": "node",
+    "title": "ENOENT",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ENOENT.*(?:open|no such file or directory) '?([^'\\s]+)'?"
+    },
+    "slots": {
+      "1": "path"
+    },
+    "jokes": [
+      "'{path}' does not exist, and Node would like you to know that.",
+      "ENOENT: '{path}' is a path to nowhere.",
+      "That file at '{path}' is fictional.",
+      "Node went looking for '{path}' and found only disappointment.",
+      "'{path}' \u2014 this file has never existed, and it shows."
+    ],
+    "fix": {
+      "summary": "Verify the file path is correct relative to the process's working directory.",
+      "command": "ls -la $(dirname {path})"
+    },
+    "personality_tag": "filesystem",
+    "tags": [
+      "filesystem"
+    ]
+  },
+  {
+    "id": "node-npm-err-peer-dep",
+    "language": "node",
+    "title": "npm ERR! peer dep conflict",
+    "matcher": {
+      "type": "regex",
+      "pattern": "npm ERR! (?:code )?ERESOLVE"
+    },
+    "jokes": [
+      "Two packages want mutually exclusive versions of the same dependency. Classic.",
+      "npm found a peer dependency conflict and refused to guess for you.",
+      "ERESOLVE: your dependency tree has trust issues.",
+      "This is what happens when the ecosystem has forty versions of everything.",
+      "npm is asking you to pick a side in a fight it started."
+    ],
+    "fix": {
+      "summary": "Resolve the conflicting versions, or use --legacy-peer-deps if you understand the risk.",
+      "command": "npm install --legacy-peer-deps"
+    },
+    "personality_tag": "dependency",
+    "tags": [
+      "dependency",
+      "npm"
+    ]
+  },
+  {
+    "id": "node-max-call-stack",
+    "language": "node",
+    "title": "RangeError: Maximum call stack size exceeded",
+    "matcher": {
+      "type": "regex",
+      "pattern": "RangeError: Maximum call stack size exceeded"
+    },
+    "jokes": [
+      "Your function called itself until the stack gave up.",
+      "Maximum call stack size exceeded: infinite recursion strikes again.",
+      "This function will not stop calling itself. It needs a base case, and an intervention.",
+      "The call stack has a limit. You found it.",
+      "Somewhere, a recursive function forgot how to stop."
+    ],
+    "fix": {
+      "summary": "Add or fix the base case that should terminate the recursion.",
+      "command": ""
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Infinite recursion, no base case. A tale as old as time, or at least as old as this codebase.",
+        "Stack overflow from recursion. Check your base case. It's always the base case."
+      ]
+    }
+  },
+  {
+    "id": "node-cors-error",
+    "language": "node",
+    "title": "CORS error",
+    "matcher": {
+      "type": "regex",
+      "pattern": "has been blocked by CORS policy"
+    },
+    "jokes": [
+      "CORS just said no, and it will keep saying no until you configure it properly.",
+      "The browser is protecting you from yourself, and it's very annoying about it.",
+      "CORS: the security feature everyone learns to hate the hard way.",
+      "Your server didn't send the right headers, so the browser blocked the party.",
+      "This is CORS working exactly as designed, which is the worst part."
+    ],
+    "fix": {
+      "summary": "Add the correct Access-Control-Allow-Origin header on the server.",
+      "command": ""
+    },
+    "personality_tag": "network",
+    "tags": [
+      "network",
+      "browser"
+    ]
+  },
+  {
+    "id": "node-jest-no-tests",
+    "language": "node",
+    "title": "Jest: no tests found",
+    "matcher": {
+      "type": "regex",
+      "pattern": "No tests found, exiting with code 1"
+    },
+    "jokes": [
+      "Jest looked for tests and found the same nothing your coverage report already knew about.",
+      "No tests found. Bold strategy.",
+      "Your test suite is theoretical at this point.",
+      "Jest came up empty. So did your confidence in this code.",
+      "There is a testPathPattern mismatch, or there are just no tests. Pick your truth."
+    ],
+    "fix": {
+      "summary": "Check your testMatch/testPathPattern config or that test files exist.",
+      "command": "npx jest --listTests"
+    },
+    "personality_tag": "testing",
+    "tags": [
+      "testing"
+    ]
+  },
+  {
+    "id": "node-heap-out-of-memory",
+    "language": "node",
+    "title": "JavaScript heap out of memory",
+    "matcher": {
+      "type": "regex",
+      "pattern": "FATAL ERROR: .*JavaScript heap out of memory"
+    },
+    "jokes": [
+      "Node ran out of memory trying to hold whatever you built.",
+      "The heap is out of memory. So is your patience, probably.",
+      "You built something so large V8 had to tap out.",
+      "This process needs more RAM than it was given, and it wants you to know.",
+      "Heap out of memory: the sound of a memory leak reaching its final form."
+    ],
+    "fix": {
+      "summary": "Increase Node's heap size or find the memory leak.",
+      "command": "node --max-old-space-size=4096 {file}"
+    },
+    "personality_tag": "runtime",
+    "tags": [
+      "runtime",
+      "memory"
+    ]
+  },
+  {
+    "id": "node-econnrefused",
+    "language": "node",
+    "title": "ECONNREFUSED",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ECONNREFUSED.*?(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|localhost|127\\.0\\.0\\.1):(\\d+)"
+    },
+    "slots": {
+      "1": "host",
+      "2": "port"
+    },
+    "jokes": [
+      "Nothing is listening on {host}:{port}. Did you forget to start it?",
+      "Connection refused to {host}:{port} \u2014 that service is not home.",
+      "You're trying to talk to {host}:{port} and it's not picking up.",
+      "ECONNREFUSED: {host}:{port} wants nothing to do with you right now.",
+      "That server on {host}:{port} either crashed or was never started."
+    ],
+    "fix": {
+      "summary": "Make sure the target service is actually running on that host/port.",
+      "command": ""
+    },
+    "personality_tag": "network",
+    "tags": [
+      "network"
+    ]
+  },
+  {
+    "id": "node-typescript-type-error",
+    "language": "node",
+    "title": "TypeScript type error",
+    "matcher": {
+      "type": "regex",
+      "pattern": "error TS\\d+: (.+)"
+    },
+    "slots": {
+      "1": "message"
+    },
+    "jokes": [
+      "TypeScript says: '{message}'. It's not wrong.",
+      "The type checker caught you: '{message}'.",
+      "TypeScript is doing its one job: '{message}'.",
+      "This is exactly why you added TypeScript. '{message}'.",
+      "The compiler disagrees with your life choices: '{message}'."
+    ],
+    "fix": {
+      "summary": "Fix the type mismatch reported by the compiler.",
+      "command": ""
+    },
+    "personality_tag": "syntax",
+    "tags": [
+      "typescript",
+      "syntax"
+    ]
+  },
+  {
+    "id": "node-destructure-undefined",
+    "language": "node",
+    "title": "TypeError: Cannot destructure property of undefined",
+    "matcher": { "type": "regex", "pattern": "TypeError: Cannot destructure property '(\\w+)' of '.*' as it is undefined" },
+    "slots": { "1": "prop" },
+    "jokes": [
+      "You destructured '.{prop}' from undefined. Undefined does not have properties.",
+      "This is Cannot-read-property's cooler cousin, same underlying problem.",
+      "You assumed that object existed before pulling '{prop}' out of it.",
+      "Destructuring undefined is still just accessing undefined, with extra syntax.",
+      "'{prop}' was never going to come out of nothing.",
+      "The value you're destructuring never arrived, and neither did '{prop}'."
+    ],
+    "fix": { "summary": "Add a default value or null check before destructuring.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "destructuring"]
+  },
+  {
+    "id": "node-require-esm",
+    "language": "node",
+    "title": "ERR_REQUIRE_ESM",
+    "matcher": { "type": "regex", "pattern": "Error \\[ERR_REQUIRE_ESM\\]" },
+    "jokes": [
+      "You require()'d a package that only speaks ESM now.",
+      "This module went all-in on import/export and left require() behind.",
+      "ERR_REQUIRE_ESM: the CommonJS/ESM divide claims another victim.",
+      "That package dropped CommonJS support and nobody warned your require() calls.",
+      "You're mixing module systems and Node is refusing to referee.",
+      "This is the tax for depending on a package that modernized before you did."
+    ],
+    "fix": { "summary": "Use a dynamic import() instead of require(), or switch the project to ESM.", "command": "" },
+    "personality_tag": "dependency",
+    "tags": ["import", "esm"]
+  },
+  {
+    "id": "node-eperm",
+    "language": "node",
+    "title": "EPERM: operation not permitted",
+    "matcher": { "type": "regex", "pattern": "EPERM: operation not permitted, (\\w+) '([^']+)'" },
+    "slots": { "1": "operation", "2": "path" },
+    "jokes": [
+      "Node tried to {operation} '{path}' and the OS said absolutely not.",
+      "EPERM: '{path}' is locked, watched, or owned by something else entirely.",
+      "Something else has '{path}' open, and it isn't sharing.",
+      "You tried to {operation} '{path}' without the permissions to back it up.",
+      "This is the classic 'another process is using this file' problem, spelled EPERM.",
+      "'{path}' is not yours to {operation} right now."
+    ],
+    "fix": { "summary": "Close any process holding the file open, or fix its permissions.", "command": "" },
+    "personality_tag": "permissions",
+    "tags": ["permissions", "filesystem"]
+  },
+  {
+    "id": "node-self-signed-cert",
+    "language": "node",
+    "title": "self-signed certificate error",
+    "matcher": { "type": "regex", "pattern": "(?:SELF_SIGNED_CERT_IN_CHAIN|UNABLE_TO_VERIFY_LEAF_SIGNATURE)" },
+    "jokes": [
+      "Node doesn't trust that certificate, and honestly it has a point.",
+      "This TLS chain ends in a cert nobody vouched for.",
+      "Self-signed certificate: convenient for dev, terrifying for trust chains.",
+      "Node's TLS verification just caught something you were hoping it wouldn't notice.",
+      "That certificate signed itself. Node finds that suspicious, correctly.",
+      "This is what happens in local dev with a cert nobody in the real world trusts."
+    ],
+    "fix": { "summary": "Use a properly signed cert, or set NODE_TLS_REJECT_UNAUTHORIZED only for local dev.", "command": "" },
+    "personality_tag": "network",
+    "tags": ["network", "tls"]
+  },
+  {
+    "id": "node-webpack-module-not-found",
+    "language": "node",
+    "title": "webpack: Module not found",
+    "matcher": { "type": "regex", "pattern": "Module not found: Error: Can't resolve '([^']+)'" },
+    "slots": { "1": "module_name" },
+    "jokes": [
+      "webpack went looking for '{module_name}' and came back empty.",
+      "'{module_name}' isn't installed, or the path to it is wrong. Pick one.",
+      "This is the bundler's version of ModuleNotFoundError, and it means the same thing.",
+      "webpack can't resolve '{module_name}' because it genuinely isn't there.",
+      "'{module_name}' was imported into existence but never actually installed.",
+      "The bundler cannot bundle what does not exist."
+    ],
+    "fix": { "summary": "Install the missing package or fix the import path.", "command": "npm install {module_name}" },
+    "personality_tag": "dependency",
+    "tags": ["dependency", "webpack"]
+  },
+  {
+    "id": "node-react-hook-rules",
+    "language": "node",
+    "title": "Invalid hook call",
+    "matcher": { "type": "regex", "pattern": "Invalid hook call\\. Hooks can only be called" },
+    "jokes": [
+      "You called a hook somewhere React did not expect a hook to be called.",
+      "Hooks have rules. You broke one of the two rules there are.",
+      "This is either a conditional hook, a loop hook, or two copies of React fighting.",
+      "React's rules of hooks exist specifically to prevent this error.",
+      "Somewhere, a hook was called outside a function component and React noticed immediately.",
+      "You either called this hook conditionally, or you have duplicate React versions installed."
+    ],
+    "fix": { "summary": "Check for conditional hook calls, or duplicate React versions in node_modules.", "command": "npm ls react" },
+    "personality_tag": "runtime",
+    "tags": ["react", "runtime"]
+  },
+  {
+    "id": "node-invalid-json-package",
+    "language": "node",
+    "title": "Unexpected token in JSON",
+    "matcher": { "type": "regex", "pattern": "Unexpected token .* in JSON at position \\d+" },
+    "jokes": [
+      "Something you're parsing as JSON is not JSON. A trailing comma, probably.",
+      "JSON.parse() met your string and immediately gave up.",
+      "This is what a stray comma or an HTML error page disguised as JSON looks like.",
+      "Whatever came back was not valid JSON, no matter how confident you were.",
+      "The JSON parser found the exact character it hates most.",
+      "This usually means the response body isn't what you thought it was."
+    ],
+    "fix": { "summary": "Log the raw string before parsing to see what was actually returned.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "json"]
+  },
+  {
+    "id": "node-fetch-failed",
+    "language": "node",
+    "title": "TypeError: fetch failed",
+    "matcher": { "type": "regex", "pattern": "TypeError: fetch failed" },
+    "jokes": [
+      "fetch() tried to reach something and came back with nothing but disappointment.",
+      "This is DNS, network, or a dead server, wearing a very unhelpful error message.",
+      "fetch failed: somewhere between here and the destination, something gave up.",
+      "The network request didn't just fail, it failed to even tell you why clearly.",
+      "You're offline, the host is down, or the URL is wrong. Take your pick.",
+      "This is the generic wrapper error hiding the actual network problem underneath."
+    ],
+    "fix": { "summary": "Check network connectivity, the target URL, and DNS resolution.", "command": "" },
+    "personality_tag": "network",
+    "tags": ["network"]
+  },
+  {
+    "id": "node-listen-eacces",
+    "language": "node",
+    "title": "listen EACCES: permission denied",
+    "matcher": { "type": "regex", "pattern": "Error: listen EACCES: permission denied (\\S+):(\\d+)" },
+    "slots": { "1": "host", "2": "port" },
+    "jokes": [
+      "Binding to {host}:{port} needs privileges you don't currently have.",
+      "Ports below 1024 belong to root. You are not root.",
+      "This is the OS telling you to pick a higher port number, politely, via crashing.",
+      "{host}:{port} is a privileged port and your process is not privileged.",
+      "You'll need sudo or a different port. Pick the less scary option.",
+      "listen EACCES: the classic 'trying to bind to port 80 as a regular user' story."
+    ],
+    "fix": { "summary": "Use a port above 1024, or grant the process permission to bind to privileged ports.", "command": "" },
+    "personality_tag": "permissions",
+    "tags": ["permissions", "network"]
+  },
+  {
+    "id": "node-import-outside-module",
+    "language": "node",
+    "title": "SyntaxError: Cannot use import statement outside a module",
+    "matcher": { "type": "regex", "pattern": "SyntaxError: Cannot use import statement outside a module" },
+    "jokes": [
+      "You used import syntax in a file Node still thinks is CommonJS.",
+      "This file needs to be told it's an ES module. It currently believes otherwise.",
+      "import/export doesn't work here until package.json says \"type\": \"module\".",
+      "Node parsed this as CommonJS and choked on the first import statement it found.",
+      "You wrote modern syntax into a file running under old module rules.",
+      "This is a module-type mismatch, not a real syntax error."
+    ],
+    "fix": { "summary": "Add \"type\": \"module\" to package.json, or use .mjs, or switch to require().", "command": "" },
+    "personality_tag": "syntax",
+    "tags": ["syntax", "esm"]
+  },
+  {
+    "id": "node-not-iterable",
+    "language": "node",
+    "title": "TypeError: x is not iterable",
+    "matcher": { "type": "regex", "pattern": "TypeError: ([\\w.]+) is not iterable" },
+    "slots": { "1": "expr" },
+    "jokes": [
+      "You tried to spread or for-of a '{expr}' that has no idea what iteration is.",
+      "'{expr}' is not iterable, because it was never an array, Map, or Set to begin with.",
+      "This is what happens when a function you expected to return an array returns something else.",
+      "You can't for-of over '{expr}'. It doesn't have that ability.",
+      "'{expr}' lacks a Symbol.iterator, and so does your assumption about its type.",
+      "Spread syntax needs something iterable. '{expr}' was not the something you thought it was."
+    ],
+    "fix": { "summary": "Check the actual type/shape of the value before iterating over it.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime"]
+  },
+  {
+    "id": "node-headers-already-sent",
+    "language": "node",
+    "title": "Cannot set headers after they are sent to the client",
+    "matcher": { "type": "regex", "pattern": "Error: Can't set headers after they are sent to the client" },
+    "jokes": [
+      "You called res.send() twice on the same request. The client already left.",
+      "This response already went out the door. Setting headers now is too late.",
+      "Somewhere in this handler, a response is being sent more than once.",
+      "Express is telling you politely that you double-responded to a single request.",
+      "The client already got its response. Whatever you're trying to send now, it's not listening.",
+      "This is the classic missing-return-statement-after-res.send() bug."
+    ],
+    "fix": { "summary": "Make sure every code path returns after sending a response, so it only sends once.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "http"]
+  },
+  {
+    "id": "node-max-listeners-warning",
+    "language": "node",
+    "title": "MaxListenersExceededWarning",
+    "matcher": { "type": "regex", "pattern": "MaxListenersExceededWarning" },
+    "jokes": [
+      "This EventEmitter has more listeners attached to it than seems healthy.",
+      "Node thinks you have a memory leak. Node is probably right.",
+      "Something is calling .on() in a loop without ever calling .off().",
+      "MaxListenersExceededWarning: your event emitter is quietly accumulating listeners forever.",
+      "This is the warning before the memory leak becomes a real problem.",
+      "Somewhere, a listener is being added on every request and never removed."
+    ],
+    "fix": { "summary": "Find where listeners are added repeatedly and remove them, or raise the limit deliberately.", "command": "" },
+    "personality_tag": "resource",
+    "tags": ["runtime", "memory"]
+  },
+  {
+    "id": "node-invalid-array-length",
+    "language": "node",
+    "title": "RangeError: Invalid array length",
+    "matcher": { "type": "regex", "pattern": "RangeError: Invalid array length" },
+    "jokes": [
+      "You asked for an array with a length that doesn't make sense. Negative, probably.",
+      "Arrays cannot have negative or absurdly large lengths, no matter how you calculated it.",
+      "Something upstream produced a bad number, and now new Array() is paying for it.",
+      "RangeError: Invalid array length. Check the math that produced that length.",
+      "This is what happens when a length calculation goes negative or infinite.",
+      "That array length came from somewhere broken. Follow it back."
+    ],
+    "fix": { "summary": "Check the calculation that produced the array length before constructing it.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime"]
+  },
+  {
+    "id": "node-buffer-not-defined",
+    "language": "node",
+    "title": "ReferenceError: Buffer is not defined",
+    "matcher": { "type": "regex", "pattern": "ReferenceError: Buffer is not defined" },
+    "jokes": [
+      "Buffer is a Node global. You're not in Node anymore, or your bundler stripped it.",
+      "This code assumed a Node environment. It's running somewhere else now.",
+      "Buffer doesn't exist in the browser, and modern bundlers stopped polyfilling it for you.",
+      "You ported Node code to the browser and Buffer didn't come along for the ride.",
+      "This is the price of bundlers dropping automatic Node polyfills.",
+      "Buffer used to be quietly polyfilled. Those days are over."
+    ],
+    "fix": { "summary": "Add a Buffer polyfill for the browser, or avoid Buffer usage in client code.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "bundler"]
+  },
+  {
+    "id": "node-process-not-defined",
+    "language": "node",
+    "title": "ReferenceError: process is not defined",
+    "matcher": { "type": "regex", "pattern": "ReferenceError: process is not defined" },
+    "jokes": [
+      "process is a Node global. This code is not running in Node.",
+      "You're using process.env in a place that has no process at all.",
+      "This is what happens when server code sneaks into a browser bundle unmodified.",
+      "process doesn't exist in the browser, and your bundler didn't shim it this time.",
+      "Someone wrote isomorphic code that was not, in fact, isomorphic.",
+      "process.env is a Node concept. The browser has never heard of it."
+    ],
+    "fix": { "summary": "Use build-time env injection (e.g. define plugin) instead of relying on process at runtime in the browser.", "command": "" },
+    "personality_tag": "runtime",
+    "tags": ["runtime", "bundler"]
+  }
+]
