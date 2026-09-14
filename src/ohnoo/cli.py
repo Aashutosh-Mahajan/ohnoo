@@ -195,6 +195,34 @@ def _capture_error_text() -> str:
     return ""
 
 
+def _confirm_from_terminal(prompt: str, default: bool = False) -> bool:
+    """Ask a y/n question, reading from the controlling terminal rather than stdin.
+
+    `cmd 2>&1 | ohnoo fix` is ohnoo's own documented usage, and it means
+    stdin has already been fully consumed by `_capture_error_text()` above
+    by the time we need to ask for confirmation. Without this, click's
+    normal `confirm()` (which reads from stdin) would hit EOF immediately
+    and abort -- silently defeating the one safety check --fix depends on.
+    """
+    if sys.stdin.isatty():
+        return click.confirm(prompt, default=default)
+
+    tty_path = "CON" if os.name == "nt" else "/dev/tty"
+    try:
+        with open(tty_path) as tty:
+            original_stdin = sys.stdin
+            sys.stdin = tty
+            try:
+                return click.confirm(prompt, default=default)
+            finally:
+                sys.stdin = original_stdin
+    except OSError:
+        # No controlling terminal at all (fully non-interactive, e.g. CI) --
+        # degrade to the safe default rather than crashing or hanging.
+        click.echo(f"{prompt} [non-interactive: defaulting to {'yes' if default else 'no'}]")
+        return default
+
+
 _NO_ERROR_TEXT_MESSAGE = (
     "ohnoo: no error text to work with. Pipe a failing command in "
     "(`cmd 2>&1 | ohnoo {cmd}`) or run this right after a real crash with the shell hook active."
@@ -227,7 +255,7 @@ def fix_cmd() -> None:
     if should_warn_this_session():
         click.echo(cost_warning_text())
 
-    if not click.confirm("Let an installed AI coding agent attempt a fix now?", default=False):
+    if not _confirm_from_terminal("Let an installed AI coding agent attempt a fix now?", default=False):
         click.echo("ohnoo: cancelled, nothing was run.")
         return
 
