@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ohnoo.agents._common import FixResult, capture_git_diff, run_cli
+from ohnoo.agents._common import FixResult, invoke_fix_subprocess, run_cli
 
 
 def invoke_explain(prompt: str, cwd: str | None = None) -> str:
@@ -23,20 +23,6 @@ def invoke_fix(prompt: str, cwd: str | None = None) -> FixResult:
 
     See FixResult docstring: the diff is captured after the run, not before.
     """
-    result = run_cli(["claude", "-p", prompt, "--allowedTools", "Read,Edit,Bash"], cwd=cwd)
-    if result is None:
-        return FixResult(
-            success=False,
-            stdout="",
-            diff="",
-            error="could not invoke claude (binary missing, timed out, or errored)",
-        )
-    diff = capture_git_diff(cwd)
-    if result.returncode != 0:
-        return FixResult(
-            success=False,
-            stdout=result.stdout,
-            diff=diff,
-            error=result.stderr.strip() or "claude exited with a nonzero status",
-        )
-    return FixResult(success=True, stdout=result.stdout, diff=diff, error=None)
+    return invoke_fix_subprocess(
+        ["claude", "-p", prompt, "--allowedTools", "Read,Edit,Bash"], cwd=cwd, binary_name="claude"
+    )

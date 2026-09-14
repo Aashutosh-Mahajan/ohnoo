@@ -45,7 +45,9 @@ class Pattern:
     personality_tag: str = ""
     tags: list = field(default_factory=list)
 
-    _compiled: re.Pattern | None = field(default=None, repr=False, compare=False)
+    # False is a sentinel meaning "tried to compile, pattern is invalid" --
+    # distinct from None, which means "not compiled yet".
+    _compiled: re.Pattern | bool | None = field(default=None, repr=False, compare=False)
 
     def _compile(self) -> re.Pattern | None:
         if self.matcher_type != "regex":
@@ -58,13 +60,22 @@ class Pattern:
                 flags |= re.MULTILINE
             if "dotall" in self.matcher_flags:
                 flags |= re.DOTALL
-            self._compiled = re.compile(self.matcher_pattern, flags)
-        return self._compiled
+            try:
+                self._compiled = re.compile(self.matcher_pattern, flags)
+            except re.error:
+                # A malformed community-contributed pattern must never take
+                # down every other pattern's matching -- treat it as one
+                # that never matches instead of raising.
+                self._compiled = False
+        return self._compiled or None
 
     def match(self, text: str):
         """Return a dict of filled slot values if this pattern matches, else None."""
         if self.matcher_type == "regex":
-            m = self._compile().search(text)
+            compiled = self._compile()
+            if compiled is None:
+                return None
+            m = compiled.search(text)
             if not m:
                 return None
             groups = m.groupdict() if m.groupdict() else {}
@@ -107,28 +118,45 @@ def _fill(template: str, slots: dict) -> str:
     return _SLOT_RE.sub(repl, template)
 
 
+def _build_pattern(entry: dict) -> Pattern:
+    fix = Fix(summary=entry["fix"]["summary"], command=entry["fix"]["command"])
+    return Pattern(
+        id=entry["id"],
+        language=entry["language"],
+        title=entry.get("title", ""),
+        matcher_type=entry["matcher"]["type"],
+        matcher_pattern=entry["matcher"]["pattern"],
+        matcher_flags=entry["matcher"].get("flags", []),
+        slots=entry.get("slots", {}),
+        jokes=entry["jokes"],
+        vibes=entry.get("vibes", {}),
+        fix=fix,
+        personality_tag=entry.get("personality_tag", ""),
+        tags=entry.get("tags", []),
+    )
+
+
 def _load_file(path: Path) -> list:
-    with path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
+    """Load one pattern file, skipping (not crashing on) malformed entries.
+
+    A single bad community-contributed pattern -- a missing required key, a
+    wrong type -- must never break every other pattern in the database, or
+    the CLI, for every user. Layer 1 is promised to never fail.
+    """
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return []
+    if not isinstance(data, list):
+        return []
+
     patterns = []
     for entry in data:
-        fix = Fix(summary=entry["fix"]["summary"], command=entry["fix"]["command"])
-        patterns.append(
-            Pattern(
-                id=entry["id"],
-                language=entry["language"],
-                title=entry.get("title", ""),
-                matcher_type=entry["matcher"]["type"],
-                matcher_pattern=entry["matcher"]["pattern"],
-                matcher_flags=entry["matcher"].get("flags", []),
-                slots=entry.get("slots", {}),
-                jokes=entry["jokes"],
-                vibes=entry.get("vibes", {}),
-                fix=fix,
-                personality_tag=entry.get("personality_tag", ""),
-                tags=entry.get("tags", []),
-            )
-        )
+        try:
+            patterns.append(_build_pattern(entry))
+        except (KeyError, TypeError, AttributeError):
+            continue
     return patterns
 
 
@@ -146,7 +174,10 @@ def find_match(text: str, patterns: list | None = None):
     if patterns is None:
         patterns = load_all_patterns()
     for pattern in patterns:
-        slots = pattern.match(text)
+        try:
+            slots = pattern.match(text)
+        except re.error:
+            continue
         if slots is not None:
             return pattern, slots
     return None, None

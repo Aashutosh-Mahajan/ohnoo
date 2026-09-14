@@ -112,12 +112,15 @@ _SHELL_INSTALLERS = {
     default="auto",
     help="Which shell to patch. 'auto' detects bash/zsh/fish from $SHELL (PowerShell needs an explicit --shell).",
 )
-def init(shell: str) -> None:
+@click.option("--uninstall", is_flag=True, help="Remove the ohnoo hook instead of installing it.")
+def init(shell: str, uninstall: bool) -> None:
     """Install the ohnoo shell hook into your rc file / profile (idempotent).
 
     fish support is partial: it can't auto-capture stderr (no process
     substitution for output), so it nudges toward manual pipe mode instead.
     PowerShell support uses Start-Transcript to capture session output.
+
+    Pass --uninstall to remove a previously installed hook.
     """
     if shell == "auto":
         shell = _detect_shell()
@@ -129,6 +132,14 @@ def init(shell: str) -> None:
             "Pass --shell bash|zsh|fish|powershell explicitly."
         )
         sys.exit(1)
+
+    if uninstall:
+        path, removed = installer.uninstall()
+        if removed:
+            click.echo(f"ohnoo hook removed from {path}. Restart your shell or re-source it.")
+        else:
+            click.echo(f"ohnoo hook not found in {path}. Nothing to do.")
+        return
 
     path, installed = installer.install()
 
@@ -152,17 +163,34 @@ def _detect_shell() -> str:
     return "unknown"
 
 
+def _log_path() -> Path:
+    """Resolve the captured stderr/transcript log path.
+
+    Honors $OHNOO_LOG (set by the shell hook itself), falling back to the
+    same default the hook uses. Deliberately not a CLI flag: an
+    argv-controllable arbitrary path here would let anything invoking
+    `ohnoo check` read and pattern-match (or, with Layer 4 configured,
+    forward to a hosted LLM) any file it names.
+    """
+    return Path(os.environ.get("OHNOO_LOG", str(Path.home() / ".cache" / "ohnoo" / "stderr.log"))).expanduser()
+
+
 @main.command()
 @click.option("--exit-code", "exit_code", type=int, required=True)
-@click.option("--log", "log_path", type=click.Path(exists=False), required=True)
-@click.option("--last-command", "last_command", default="", help="The command that just failed, for context only.")
+@click.option(
+    "--last-command",
+    "last_command",
+    default="",
+    envvar="OHNOO_LAST_COMMAND",
+    help="The command that just failed, for context only.",
+)
 @click.pass_context
-def check(ctx: click.Context, exit_code: int, log_path: str, last_command: str) -> None:
+def check(ctx: click.Context, exit_code: int, last_command: str) -> None:
     """Internal command invoked by the shell hook after a non-zero exit."""
     if exit_code == 0:
         return
 
-    p = Path(log_path)
+    p = _log_path()
     if not p.exists():
         return
 
@@ -189,7 +217,7 @@ def _capture_error_text() -> str:
         if text.strip():
             return text
 
-    log_path = Path(os.environ.get("OHNOO_LOG", str(Path.home() / ".cache" / "ohnoo" / "stderr.log")))
+    log_path = _log_path()
     if log_path.exists():
         return _tail(log_path, max_bytes=8000)
     return ""
@@ -259,7 +287,8 @@ def fix_cmd() -> None:
         click.echo("ohnoo: cancelled, nothing was run.")
         return
 
-    result = fix(text, cwd=os.getcwd())
+    cwd = os.getcwd()
+    result = fix(text, cwd=cwd)
     if not result.success:
         click.echo(f"ohnoo: fix attempt failed: {result.error}")
         return
@@ -269,6 +298,24 @@ def fix_cmd() -> None:
         "(headless CLIs can't preview edits before applying them). Diff captured afterward:"
     )
     click.echo(result.diff or "(no diff detected - the agent may not have changed any tracked files)")
+
+    if result.status_before is None or result.status_after is None:
+        click.echo(
+            "ohnoo: not a git repository (or git isn't available) -- changes can't be "
+            "auto-reverted here. Review them manually."
+        )
+        return
+
+    if result.status_before == result.status_after:
+        return  # nothing changed on disk; no keep/revert decision needed
+
+    if not _confirm_from_terminal("Keep these changes?", default=True):
+        from ohnoo.agents._common import revert_changes
+
+        reverted = revert_changes(cwd, result.status_before, result.status_after)
+        click.echo("ohnoo: changes reverted." if reverted else "ohnoo: nothing to revert.")
+    else:
+        click.echo("ohnoo: changes kept.")
 
 
 @main.command("share")
@@ -340,6 +387,13 @@ def mcp_server_cmd(port: int, host: str) -> None:
     except ImportError:
         click.echo("ohnoo: mcp-server needs extra deps. Install with `pip install ohnoo[mcp]`.")
         return
+
+    if host not in ("127.0.0.1", "localhost", "::1"):
+        click.echo(
+            click.style("ohnoo: warning: ", fg="yellow", bold=True)
+            + f"binding to '{host}' exposes this server to other hosts on the network. "
+            "It has no authentication -- anyone who can reach it can call its tools."
+        )
 
     click.echo(f"ohnoo: starting MCP server at http://{host}:{port}/mcp")
     run_server(port=port, host=host)

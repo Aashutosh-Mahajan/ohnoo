@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from ohnoo.hook.common import install_block
+from ohnoo.hook.common import install_block, uninstall_block
 
 RC_FILE = "~/.config/fish/config.fish"
 
@@ -26,7 +26,15 @@ end
 """
 
 
-def install() -> tuple[Path, bool]:
+def _rc_path() -> Path:
     override = os.environ.get("OHNOO_FISH_CONFIG")
-    rc_path = Path(override).expanduser() if override else Path(RC_FILE).expanduser()
-    return install_block(rc_path, _BODY)
+    return Path(override).expanduser() if override else Path(RC_FILE).expanduser()
+
+
+def install() -> tuple[Path, bool]:
+    return install_block(_rc_path(), _BODY)
+
+
+def uninstall() -> tuple[Path, bool]:
+    rc_path = _rc_path()
+    return rc_path, uninstall_block(rc_path)

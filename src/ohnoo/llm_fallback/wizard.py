@@ -18,6 +18,21 @@ from .providers import get_provider
 
 KNOWN_PROVIDERS = ("groq", "anthropic", "openai", "ollama")
 
+# Whatever env var is named here gets its *current value* sent as an API
+# key to the chosen provider on every unrecognized error. If the name looks
+# like it holds something else entirely (cloud creds, a DB URL, a different
+# service's token), that's very likely a mistake -- flag it before saving.
+_SUSPICIOUS_ENV_VAR_SUBSTRINGS = (
+    "AWS_", "AZURE_", "GCP_", "GOOGLE_APPLICATION_CREDENTIALS",
+    "SSH_", "PRIVATE_KEY", "GITHUB_TOKEN", "GITLAB_TOKEN", "NPM_TOKEN",
+    "DATABASE_URL", "DB_PASSWORD", "STRIPE_", "PASSWORD", "SECRET_KEY",
+)
+
+
+def _looks_suspicious(env_var_name: str) -> bool:
+    upper = env_var_name.upper()
+    return any(needle in upper for needle in _SUSPICIOUS_ENV_VAR_SUBSTRINGS)
+
 
 def run_setup_wizard(disable: bool = False) -> str:
     """Run the interactive Layer 4 setup wizard, or disable it.
@@ -53,6 +68,14 @@ def run_setup_wizard(disable: bool = False) -> str:
             "(we store only this name, never the key itself)",
             default=default_env_var,
         )
+
+    if provider != "ollama" and _looks_suspicious(env_var_name) and not click.confirm(
+        f"'{env_var_name}' doesn't look like an LLM API key env var -- its *current "
+        f"value* will be sent to {provider} as your API key on every unrecognized "
+        "error. Are you sure this is right?",
+        default=False,
+    ):
+        return "Cancelled. No config was saved."
 
     save_config(provider, env_var_name)
 

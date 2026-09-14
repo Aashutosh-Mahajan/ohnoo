@@ -68,6 +68,14 @@ def save_config(provider: str, env_var_name: str) -> None:
         f'api_key_env_var = "{_toml_escape(env_var_name)}"\n'
     )
     path.write_text(content, encoding="utf-8")
+    try:
+        # Best-effort: restrict to the owner. This file names which env var
+        # gets sent as an API key on ohnoo's behalf, so other local users
+        # shouldn't be able to read or tamper with it. No-op-ish on Windows
+        # (NTFS ACLs aren't controlled by chmod), but harmless there.
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
 
 
 def clear_config() -> None:

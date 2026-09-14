@@ -23,6 +23,20 @@ NO_AGENT_FOUND_MESSAGE = (
     "(hosted LLM fallback) with `ohnoo setup-ai`."
 )
 
+# codex/agy have no flag equivalent to claude's --allowedTools: the read-only
+# guarantee for --explain on these backends is a prompt-level request, not a
+# technical restriction, so users should know that going in.
+_UNSCOPED_READONLY_WARNING = {
+    "codex": (
+        "ohnoo: note - codex has no read-only tool flag, so this is a request to "
+        "the model, not an enforced restriction.\n"
+    ),
+    "agy": (
+        "ohnoo: note - agy has no read-only tool flag, so this is a request to "
+        "the model, not an enforced restriction.\n"
+    ),
+}
+
 # Per-process only: a real "once per shell session" would need a file lock /
 # on-disk marker keyed to the session, which is out of scope here.
 _warned_this_process = False
@@ -68,7 +82,9 @@ def explain(
 
     prompt = build_scoped_prompt(traceback_text, None, None, mode="explain")
     module = _AGENT_MODULES[agent_name]
-    return module.invoke_explain(prompt, cwd=cwd)
+    result = module.invoke_explain(prompt, cwd=cwd)
+    warning = _UNSCOPED_READONLY_WARNING.get(agent_name, "")
+    return warning + result
 
 
 def fix(

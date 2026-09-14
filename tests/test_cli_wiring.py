@@ -140,6 +140,36 @@ def test_confirm_from_terminal_falls_back_to_default_with_no_controlling_termina
     assert _confirm_from_terminal("Proceed?", default=False) is False
 
 
+def test_check_command_reads_log_from_env_and_last_command_from_env(tmp_path, monkeypatch):
+    """`check` (invoked by the shell hooks) must resolve both the log path
+    and the last-command text from environment variables, not from
+    attacker-shaped CLI flags -- see the pwsh argv-injection fix."""
+    _isolate_state(monkeypatch, tmp_path)
+    log_path = tmp_path / "stderr.log"
+    log_path.write_text("ModuleNotFoundError: No module named 'requests'\n", encoding="utf-8")
+    monkeypatch.setenv("OHNOO_LOG", str(log_path))
+    monkeypatch.setenv("OHNOO_LAST_COMMAND", "python app.py")
+
+    runner = CliRunner()
+    result = runner.invoke(main, ["check", "--exit-code", "1"])
+
+    assert result.exit_code == 0
+    assert "requests" in result.output
+
+
+def test_check_command_ignores_a_zero_exit_code(tmp_path, monkeypatch):
+    _isolate_state(monkeypatch, tmp_path)
+    log_path = tmp_path / "stderr.log"
+    log_path.write_text("ModuleNotFoundError: No module named 'requests'\n", encoding="utf-8")
+    monkeypatch.setenv("OHNOO_LOG", str(log_path))
+
+    runner = CliRunner()
+    result = runner.invoke(main, ["check", "--exit-code", "0"])
+
+    assert result.exit_code == 0
+    assert result.output == ""
+
+
 def test_setup_ai_disable_never_prompts(tmp_path, monkeypatch):
     _isolate_state(monkeypatch, tmp_path)
     runner = CliRunner()
