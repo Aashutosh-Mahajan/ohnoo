@@ -8,6 +8,7 @@ entirely with Pillow.
 
 from __future__ import annotations
 
+import os
 import textwrap
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,6 +16,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 from ohnoo.engine import Diagnosis
+
+_SHARE_DIR_ENV = "OHNOO_SHARE_DIR"
 
 CARD_WIDTH = 1200
 CARD_HEIGHT = 630
@@ -34,7 +37,9 @@ _DOT_GREEN = (39, 201, 63)
 
 def _default_output_path() -> Path:
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%f")
-    return Path.home() / ".cache" / "ohnoo" / "shares" / f"{ts}.png"
+    override = os.environ.get(_SHARE_DIR_ENV)
+    base = Path(override) if override else Path.home() / ".cache" / "ohnoo" / "shares"
+    return base / f"{ts}.png"
 
 
 def _font(size: int) -> ImageFont.ImageFont:
