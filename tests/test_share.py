@@ -36,6 +36,15 @@ def test_render_share_card_default_output_path_uses_home_cache(tmp_path, monkeyp
     assert result.parent.name == "shares"
 
 
+def test_render_share_card_respects_share_dir_override(tmp_path, monkeypatch):
+    monkeypatch.setenv("OHNOO_SHARE_DIR", str(tmp_path))
+
+    result = render_share_card(_diagnosis())
+
+    assert result.exists()
+    assert result.parent == tmp_path
+
+
 def test_render_share_card_without_command_still_renders(tmp_path):
     output = tmp_path / "no_command.png"
     diagnosis = Diagnosis(
