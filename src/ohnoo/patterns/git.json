@@ -1,0 +1,470 @@
+[
+  {
+    "id": "git-not-a-repository",
+    "language": "git",
+    "title": "not a git repository",
+    "matcher": {
+      "type": "regex",
+      "pattern": "fatal: not a git repository"
+    },
+    "jokes": [
+      "This isn't a git repo. It's just a folder with dreams.",
+      "There is no .git here. There never was.",
+      "fatal: not a git repository (or you're in the wrong folder, again).",
+      "This directory has no version control and no memory of its past.",
+      "You tried to git something that was never git-ified."
+    ],
+    "fix": {
+      "summary": "Run git init, or cd into the actual repo.",
+      "command": "git init"
+    },
+    "personality_tag": "setup",
+    "tags": [
+      "setup"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Not a git repo. cd into the actual project before you start typing commands.",
+        "There's no .git here. Wrong directory, wrong day, or both."
+      ]
+    }
+  },
+  {
+    "id": "git-merge-conflict",
+    "language": "git",
+    "title": "merge conflict",
+    "matcher": {
+      "type": "regex",
+      "pattern": "CONFLICT \\(content\\): Merge conflict in (.+)"
+    },
+    "slots": {
+      "1": "file"
+    },
+    "jokes": [
+      "'{file}' has a merge conflict. Two timelines, one file, no peace.",
+      "Git found a conflict in '{file}' and refuses to guess which version you meant.",
+      "'{file}' is now a battlefield of <<<<<<< and >>>>>>>.",
+      "Merge conflict in '{file}': the git equivalent of two people talking over each other.",
+      "You and your past self disagree about '{file}'. Sort it out."
+    ],
+    "fix": {
+      "summary": "Open the file, resolve the conflict markers, then add and continue.",
+      "command": "git status"
+    },
+    "personality_tag": "merge",
+    "tags": [
+      "merge"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Merge conflict in '{file}'. Pull more often and this stops happening quite so much.",
+        "'{file}' has conflicting changes. Resolve them by hand, like every generation before you."
+      ]
+    }
+  },
+  {
+    "id": "git-detached-head",
+    "language": "git",
+    "title": "detached HEAD",
+    "matcher": {
+      "type": "regex",
+      "pattern": "You are in 'detached HEAD' state"
+    },
+    "jokes": [
+      "You're in detached HEAD state. Your commits are floating in the void, unattached to any branch.",
+      "Detached HEAD: you're a commit adrift with no branch to call home.",
+      "This is what happens when you checkout a commit hash directly. Bold choice.",
+      "You're not on any branch right now. Existentially and literally.",
+      "HEAD has detached from reality, or at least from a branch."
+    ],
+    "fix": {
+      "summary": "Create a branch here if you want to keep this work, or checkout a real branch.",
+      "command": "git checkout -b recovered-work"
+    },
+    "personality_tag": "state",
+    "tags": [
+      "state"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Detached HEAD. You checked out a commit directly again, didn't you.",
+        "You're not on a branch. Create one before you commit anything you care about."
+      ]
+    }
+  },
+  {
+    "id": "git-non-fast-forward",
+    "language": "git",
+    "title": "non-fast-forward push rejected",
+    "matcher": {
+      "type": "regex",
+      "pattern": "! \\[rejected\\].*\\(non-fast-forward\\)"
+    },
+    "jokes": [
+      "The remote has commits you don't. Pull before you push, always.",
+      "Push rejected: someone (possibly you, on another machine) got there first.",
+      "Non-fast-forward: your local branch and reality have diverged.",
+      "Git is protecting the remote from your outdated view of history.",
+      "You tried to overwrite history that already moved on without you."
+    ],
+    "fix": {
+      "summary": "Pull (with rebase if you prefer clean history) before pushing again.",
+      "command": "git pull --rebase"
+    },
+    "personality_tag": "remote",
+    "tags": [
+      "remote"
+    ]
+  },
+  {
+    "id": "git-nothing-to-commit",
+    "language": "git",
+    "title": "nothing to commit, working tree clean",
+    "matcher": {
+      "type": "regex",
+      "pattern": "nothing to commit, working tree clean"
+    },
+    "jokes": [
+      "Nothing to commit. You either finished, or forgot to save your file.",
+      "Working tree clean: suspiciously clean, if you were expecting changes.",
+      "There's nothing here. Did you actually edit anything?",
+      "Git says everything's fine. That's either great news or a sign you forgot to save.",
+      "Clean working tree: the calm before you realize you edited the wrong file."
+    ],
+    "fix": {
+      "summary": "Confirm your edits were saved and are in the expected directory.",
+      "command": "git status"
+    },
+    "personality_tag": "state",
+    "tags": [
+      "state"
+    ],
+    "vibes": {
+      "sarcastic-senior-dev": [
+        "Nothing staged. Either you're done, or you forgot to save the file. It's usually the latter.",
+        "No changes to commit. Check your editor actually saved before you panic."
+      ]
+    }
+  },
+  {
+    "id": "git-permission-denied-publickey",
+    "language": "git",
+    "title": "Permission denied (publickey)",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Permission denied \\(publickey\\)"
+    },
+    "jokes": [
+      "Your SSH key and GitHub are not on speaking terms.",
+      "Permission denied: the remote has never met your public key.",
+      "GitHub doesn't recognize you. Have you added your SSH key?",
+      "This is what happens when your key is registered on a different machine.",
+      "SSH auth failed. Your keyring and your GitHub account need to be introduced."
+    ],
+    "fix": {
+      "summary": "Check your SSH key is added to the agent and registered with the remote.",
+      "command": "ssh -T git@github.com"
+    },
+    "personality_tag": "auth",
+    "tags": [
+      "auth",
+      "ssh"
+    ]
+  },
+  {
+    "id": "git-remote-already-exists",
+    "language": "git",
+    "title": "remote origin already exists",
+    "matcher": {
+      "type": "regex",
+      "pattern": "fatal: remote (\\S+) already exists"
+    },
+    "slots": {
+      "1": "remote"
+    },
+    "jokes": [
+      "Remote '{remote}' already exists. You already did this step.",
+      "You tried to add '{remote}' twice. Git remembers everything.",
+      "'{remote}' is already registered. No need to repeat yourself.",
+      "This remote is already here. D\u00e9j\u00e0 vu, but for git config.",
+      "Adding '{remote}' again won't work \u2014 it's already in the family."
+    ],
+    "fix": {
+      "summary": "Use set-url to change it, or remove it first.",
+      "command": "git remote set-url {remote} <new-url>"
+    },
+    "personality_tag": "remote",
+    "tags": [
+      "remote"
+    ]
+  },
+  {
+    "id": "git-large-file-rejected",
+    "language": "git",
+    "title": "file exceeds GitHub's file size limit",
+    "matcher": {
+      "type": "regex",
+      "pattern": "file is (\\d+(?:\\.\\d+)?\\s?\\w*B); this exceeds GitHub's file size limit"
+    },
+    "slots": {
+      "1": "size"
+    },
+    "jokes": [
+      "That file is {size}. GitHub has limits. You have exceeded them.",
+      "You tried to push a {size} file. GitHub said absolutely not.",
+      "{size} is too large for a git repo and you know it.",
+      "This file belongs in Git LFS, not your regular history.",
+      "GitHub rejected your {size} file like a bouncer at a club."
+    ],
+    "fix": {
+      "summary": "Use Git LFS for large files, or remove it from history.",
+      "command": "git lfs track \"<file-pattern>\""
+    },
+    "personality_tag": "remote",
+    "tags": [
+      "remote",
+      "lfs"
+    ]
+  },
+  {
+    "id": "git-uncommitted-changes-checkout",
+    "language": "git",
+    "title": "local changes would be overwritten by checkout",
+    "matcher": {
+      "type": "regex",
+      "pattern": "error: Your local changes to the following files would be overwritten by checkout"
+    },
+    "jokes": [
+      "Git refuses to throw away your uncommitted work, unlike you.",
+      "Your local changes are in the way. Git is protecting you from yourself.",
+      "You have uncommitted changes and git will not silently discard them.",
+      "This is git being the responsible adult in the room.",
+      "Commit or stash first. Git isn't going to guess what you meant."
+    ],
+    "fix": {
+      "summary": "Commit or stash your changes before checking out.",
+      "command": "git stash"
+    },
+    "personality_tag": "state",
+    "tags": [
+      "state"
+    ]
+  },
+  {
+    "id": "git-branch-not-found",
+    "language": "git",
+    "title": "pathspec did not match any file(s) known to git",
+    "matcher": {
+      "type": "regex",
+      "pattern": "error: pathspec '([^']+)' did not match any file\\(s\\) known to git"
+    },
+    "slots": {
+      "1": "ref"
+    },
+    "jokes": [
+      "'{ref}' doesn't exist. Neither branch nor file. It's a myth.",
+      "Git looked for '{ref}' and drew a total blank.",
+      "There is no '{ref}' here. Check your spelling, or your assumptions.",
+      "'{ref}': not a branch, not a file, not a real thing in this repo.",
+      "You referenced something that simply isn't in this repository."
+    ],
+    "fix": {
+      "summary": "Check the branch/file name for typos, or fetch it first.",
+      "command": "git branch -a"
+    },
+    "personality_tag": "reference",
+    "tags": [
+      "reference"
+    ]
+  },
+  {
+    "id": "git-cannot-lock-ref",
+    "language": "git",
+    "title": "cannot lock ref",
+    "matcher": {
+      "type": "regex",
+      "pattern": "fatal: cannot lock ref"
+    },
+    "jokes": [
+      "Git's internal state is stuck. A stale lock file is probably the culprit.",
+      "Something's holding a ref lock and it won't let go.",
+      "Git tried to update a ref and got blocked by leftover lock files.",
+      "This is usually a crashed git process leaving junk behind.",
+      "The .git directory has some stale housekeeping to do."
+    ],
+    "fix": {
+      "summary": "Remove the stale lock file in .git/refs, then retry.",
+      "command": "find .git -name '*.lock' -delete"
+    },
+    "personality_tag": "state",
+    "tags": [
+      "state"
+    ]
+  },
+  {
+    "id": "git-diverged-branches",
+    "language": "git",
+    "title": "have diverged",
+    "matcher": {
+      "type": "regex",
+      "pattern": "have diverged,?\\s*$"
+    },
+    "jokes": [
+      "Your branch and the remote diverged. Like an old couple, but with commits.",
+      "Diverged branches: two different histories claiming to be the truth.",
+      "You and origin took different paths. Now git wants you to pick one.",
+      "Divergence: git's polite way of saying 'you both have opinions'.",
+      "This needs a merge, rebase, or a moment of quiet reflection."
+    ],
+    "fix": {
+      "summary": "Decide between merge or rebase to reconcile the histories.",
+      "command": "git status"
+    },
+    "personality_tag": "remote",
+    "tags": [
+      "remote",
+      "state"
+    ]
+  },
+  {
+    "id": "git-remote-not-a-repository",
+    "language": "git",
+    "title": "remote does not appear to be a git repository",
+    "matcher": { "type": "regex", "pattern": "fatal: '([^']+)' does not appear to be a git repository" },
+    "slots": { "1": "remote" },
+    "jokes": [
+      "'{remote}' isn't a git repository. Maybe it's a typo, maybe it never existed.",
+      "You pushed to '{remote}' and git found nothing resembling a repo there.",
+      "'{remote}' does not appear to be a git repository, because it probably isn't one.",
+      "Double-check that URL. '{remote}' is not what you think it is.",
+      "This is what happens when you paste the wrong remote URL.",
+      "Git went looking for a repository at '{remote}' and came back confused."
+    ],
+    "fix": { "summary": "Check the remote URL is correct and reachable.", "command": "git remote -v" },
+    "personality_tag": "remote",
+    "tags": ["remote"]
+  },
+  {
+    "id": "git-rebase-conflict",
+    "language": "git",
+    "title": "could not apply commit during rebase",
+    "matcher": { "type": "regex", "pattern": "error: could not apply (\\w+)\\.\\.\\." },
+    "slots": { "1": "commit" },
+    "jokes": [
+      "Commit {commit} doesn't apply cleanly. The rebase has hit a wall.",
+      "Rebase paused on {commit} because two changes overlap.",
+      "{commit} conflicts with what's already been replayed. Resolve and continue.",
+      "This is rebase's way of saying 'you two need to talk it out'.",
+      "The rebase is stuck on {commit} until you fix the conflict markers.",
+      "You're mid-rebase and {commit} refused to land quietly."
+    ],
+    "fix": { "summary": "Resolve the conflict, git add the files, then continue the rebase.", "command": "git rebase --continue" },
+    "personality_tag": "merge",
+    "tags": ["merge", "rebase"]
+  },
+  {
+    "id": "git-unrelated-histories",
+    "language": "git",
+    "title": "refusing to merge unrelated histories",
+    "matcher": { "type": "regex", "pattern": "fatal: refusing to merge unrelated histories" },
+    "jokes": [
+      "These two branches have never met before in their entire commit history.",
+      "Git is refusing to pretend these histories were ever the same story.",
+      "Unrelated histories: you're trying to merge two repos that don't share an ancestor.",
+      "This usually means someone re-initialized a repo somewhere along the way.",
+      "Git wants proof these two timelines are actually related. It has none.",
+      "You can force it, but git wants you to know these commits are strangers."
+    ],
+    "fix": { "summary": "Pass --allow-unrelated-histories if you're sure this merge is intentional.", "command": "git pull --allow-unrelated-histories" },
+    "personality_tag": "merge",
+    "tags": ["merge", "state"]
+  },
+  {
+    "id": "git-lfs-not-installed",
+    "language": "git",
+    "title": "git-lfs is not installed",
+    "matcher": { "type": "regex", "pattern": "git: 'lfs' is not a git command" },
+    "jokes": [
+      "This repo wants Git LFS and your machine has never heard of it.",
+      "'lfs' is not a git command, because you haven't installed the extension for it.",
+      "Somewhere, large binary files are waiting for an LFS client that isn't here.",
+      "Git doesn't ship LFS support out of the box. You have to want it.",
+      "This repo has LFS pointers and your git has no idea what to do with them.",
+      "Install git-lfs, or those 'files' will stay as tiny pointer text forever."
+    ],
+    "fix": { "summary": "Install Git LFS and run its one-time setup.", "command": "git lfs install" },
+    "personality_tag": "setup",
+    "tags": ["setup", "lfs"]
+  },
+  {
+    "id": "git-submodule-not-initialized",
+    "language": "git",
+    "title": "submodule not initialized",
+    "matcher": { "type": "regex", "pattern": "fatal: no submodule mapping found in \\.gitmodules for path '([^']+)'" },
+    "slots": { "1": "path" },
+    "jokes": [
+      "'{path}' is a submodule that was never actually initialized.",
+      "That empty folder at '{path}' isn't empty by accident, it's an uninitialized submodule.",
+      "Git cloned the pointer to '{path}' but never fetched what it points to.",
+      "'{path}' needs its own clone step. Cloning the parent repo wasn't enough.",
+      "Submodules don't come along for free on a normal clone.",
+      "This is the classic 'forgot --recurse-submodules' story."
+    ],
+    "fix": { "summary": "Initialize and fetch the submodules.", "command": "git submodule update --init --recursive" },
+    "personality_tag": "setup",
+    "tags": ["setup", "submodule"]
+  },
+  {
+    "id": "git-no-author-identity",
+    "language": "git",
+    "title": "Please tell me who you are",
+    "matcher": { "type": "regex", "pattern": "Please tell me who you are" },
+    "jokes": [
+      "Git has no idea who you are, and it refuses to commit anonymously.",
+      "You never configured your name or email, and git just noticed.",
+      "This is a brand new machine, or a brand new git config, taking its toll.",
+      "Git wants a name and email before it will attribute this commit to anyone.",
+      "Every commit needs an author. You haven't told git who that is.",
+      "This is the first-commit-on-a-new-machine rite of passage."
+    ],
+    "fix": { "summary": "Set your git user name and email, locally or globally.", "command": "git config --global user.email \"you@example.com\" && git config --global user.name \"Your Name\"" },
+    "personality_tag": "setup",
+    "tags": ["setup"]
+  },
+  {
+    "id": "git-clone-auth-failed-https",
+    "language": "git",
+    "title": "Authentication failed for HTTPS remote",
+    "matcher": { "type": "regex", "pattern": "fatal: Authentication failed for '([^']+)'" },
+    "slots": { "1": "remote" },
+    "jokes": [
+      "'{remote}' doesn't recognize your credentials. Or your password stopped working months ago.",
+      "GitHub retired password auth for git years ago. You need a token now.",
+      "Authentication failed for '{remote}': your username and password combo is not enough anymore.",
+      "This is what happens when you type your account password where a token belongs.",
+      "'{remote}' wants a personal access token, not the password you've used since 2019.",
+      "Your credentials didn't work, and typing them again won't fix that."
+    ],
+    "fix": { "summary": "Use a personal access token (or SSH) instead of your account password.", "command": "" },
+    "personality_tag": "auth",
+    "tags": ["auth", "remote"]
+  },
+  {
+    "id": "git-ambiguous-ref",
+    "language": "git",
+    "title": "ambiguous argument: unknown revision or path",
+    "matcher": { "type": "regex", "pattern": "fatal: ambiguous argument '([^']+)': unknown revision or path not in the working tree" },
+    "slots": { "1": "ref" },
+    "jokes": [
+      "'{ref}' is not a commit, branch, tag, or file. Git has no idea what you meant.",
+      "You referenced '{ref}' and git searched everywhere it knows to look. Nothing.",
+      "This is either a typo, an unfetched branch, or a path that was never there.",
+      "'{ref}': ambiguous to git, meaningless to your filesystem.",
+      "Git needs '--' before path arguments sometimes. This might be one of those times.",
+      "'{ref}' doesn't resolve to anything git recognizes right now."
+    ],
+    "fix": { "summary": "Check the ref exists locally (git fetch if it's remote) or add -- before path arguments.", "command": "git rev-parse --verify {ref}" },
+    "personality_tag": "reference",
+    "tags": ["reference"]
+  }
+]
