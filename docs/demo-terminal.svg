@@ -1,0 +1,63 @@
+<svg width="820" height="290" viewBox="0 0 820 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Terminal animation: ohnoo catching and roasting a ModuleNotFoundError, then giving the fix.">
+  <title>ohnoo in action</title>
+
+  <style>
+    @keyframes ohnoo-type-l1 { from { width: 0px; } to { width: 150px; } }
+    @keyframes ohnoo-type-l2 { from { width: 0px; } to { width: 320px; } }
+    @keyframes ohnoo-type-l3 { from { width: 0px; } to { width: 440px; } }
+    @keyframes ohnoo-type-l4 { from { width: 0px; } to { width: 700px; } }
+    @keyframes ohnoo-type-l5 { from { width: 0px; } to { width: 260px; } }
+    @keyframes ohnoo-blink { 50% { opacity: 0; } }
+
+    .ohnoo-clip-1 rect { animation: ohnoo-type-l1 0.5s linear 0.3s forwards; }
+    .ohnoo-clip-2 rect { animation: ohnoo-type-l2 1.13s linear 0.95s forwards; }
+    .ohnoo-clip-3 rect { animation: ohnoo-type-l3 1.57s linear 2.23s forwards; }
+    .ohnoo-clip-4 rect { animation: ohnoo-type-l4 2.47s linear 3.95s forwards; }
+    .ohnoo-clip-5 rect { animation: ohnoo-type-l5 0.9s linear 6.57s forwards; }
+    .ohnoo-cursor { opacity: 0; animation: ohnoo-blink 1s steps(1) infinite 7.6s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ohnoo-clip-1 rect, .ohnoo-clip-2 rect, .ohnoo-clip-3 rect, .ohnoo-clip-4 rect, .ohnoo-clip-5 rect,
+      .ohnoo-cursor {
+        animation: none !important;
+      }
+      .ohnoo-clip-1 rect { width: 150px; }
+      .ohnoo-clip-2 rect { width: 320px; }
+      .ohnoo-clip-3 rect { width: 440px; }
+      .ohnoo-clip-4 rect { width: 700px; }
+      .ohnoo-clip-5 rect { width: 260px; }
+      .ohnoo-cursor { opacity: 1; }
+    }
+  </style>
+
+  <defs>
+    <clipPath id="ohnoo-l1" class="ohnoo-clip-1"><rect x="0" y="54" width="0" height="26"/></clipPath>
+    <clipPath id="ohnoo-l2" class="ohnoo-clip-2"><rect x="0" y="88" width="0" height="26"/></clipPath>
+    <clipPath id="ohnoo-l3" class="ohnoo-clip-3"><rect x="0" y="122" width="0" height="26"/></clipPath>
+    <clipPath id="ohnoo-l4" class="ohnoo-clip-4"><rect x="0" y="156" width="0" height="26"/></clipPath>
+    <clipPath id="ohnoo-l5" class="ohnoo-clip-5"><rect x="0" y="190" width="0" height="26"/></clipPath>
+  </defs>
+
+  <!-- window -->
+  <rect x="1" y="1" width="818" height="288" rx="10" fill="#171a13" stroke="#2a2b30" stroke-width="1"/>
+
+  <!-- title bar -->
+  <path d="M1,11 a10,10 0 0 1 10,-10 h796 a10,10 0 0 1 10,10 v29 h-816 Z" fill="#14170f"/>
+  <line x1="1" y1="40" x2="819" y2="40" stroke="#2a2b30" stroke-width="1"/>
+  <circle cx="25" cy="20" r="6" fill="#ff5f56"/>
+  <circle cx="45" cy="20" r="6" fill="#ffbd2e"/>
+  <circle cx="65" cy="20" r="6" fill="#27c93f"/>
+  <text x="92" y="25" font-family="'IBM Plex Mono', SFMono-Regular, Consolas, monospace" font-size="12.5" fill="#7a8177">zsh — 80x24</text>
+
+  <!-- body -->
+  <g font-family="'IBM Plex Mono', SFMono-Regular, Consolas, monospace" font-size="15.5">
+    <g clip-path="url(#ohnoo-l1)"><text x="24" y="74" fill="#78c8ff">$ python app.py</text></g>
+    <g clip-path="url(#ohnoo-l2)"><text x="24" y="108" fill="#c9c7c0">Traceback (most recent call last):</text></g>
+    <g clip-path="url(#ohnoo-l3)"><text x="24" y="142" fill="#c9c7c0">ModuleNotFoundError: No module named 'requests'</text></g>
+    <g clip-path="url(#ohnoo-l4)"><text x="24" y="176" fill="#ffb454">ohnoo: 'requests' is currently on a coffee break. Also it's not installed.</text></g>
+    <g clip-path="url(#ohnoo-l5)"><text x="24" y="210" fill="#7cff9e">  fix: pip install requests</text></g>
+
+    <!-- blinking cursor, starts once typing finishes -->
+    <rect class="ohnoo-cursor" x="24" y="222" width="9" height="18" fill="#7cff9e"/>
+  </g>
+</svg>
