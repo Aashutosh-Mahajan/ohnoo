@@ -94,6 +94,52 @@ def test_explain_and_fix_report_no_error_text_when_nothing_piped(tmp_path, monke
     assert "no error text to work with" in fix_result.output
 
 
+def test_fix_confirmation_reads_from_terminal_not_exhausted_stdin(tmp_path, monkeypatch):
+    """Regression test: `cmd 2>&1 | ohnoo fix` consumes all of stdin reading
+    the piped error text, so the confirmation prompt used to hit EOF and
+    silently abort -- defeating the one safety check --fix relies on. It
+    must instead read the y/n answer from the controlling terminal.
+    """
+    _isolate_state(monkeypatch, tmp_path)
+    monkeypatch.setattr("ohnoo.agents.handoff.should_warn_this_session", lambda: False)
+
+    calls = {}
+
+    def fake_confirm_from_terminal(prompt, default=False):
+        calls["prompt"] = prompt
+        calls["default"] = default
+        return False
+
+    monkeypatch.setattr("ohnoo.cli._confirm_from_terminal", fake_confirm_from_terminal)
+
+    runner = CliRunner()
+    result = runner.invoke(main, ["fix"], input="ModuleNotFoundError: No module named 'requests'\n")
+
+    assert calls.get("default") is False
+    assert "cancelled" in result.output.lower()
+
+
+def test_confirm_from_terminal_falls_back_to_default_with_no_controlling_terminal(monkeypatch):
+    """When there's no controlling terminal at all (e.g. plain CI), don't
+    hang or crash -- degrade to the safe default."""
+    import builtins
+
+    from ohnoo.cli import _confirm_from_terminal
+
+    monkeypatch.setattr("sys.stdin.isatty", lambda: False)
+
+    real_open = builtins.open
+
+    def fake_open(path, *args, **kwargs):
+        if path in ("CON", "/dev/tty"):
+            raise OSError("no controlling terminal")
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", fake_open)
+
+    assert _confirm_from_terminal("Proceed?", default=False) is False
+
+
 def test_setup_ai_disable_never_prompts(tmp_path, monkeypatch):
     _isolate_state(monkeypatch, tmp_path)
     runner = CliRunner()
