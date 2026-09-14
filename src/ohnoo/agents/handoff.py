@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from ohnoo.agents import antigravity, claude_code, codex
 from ohnoo.agents._common import FixResult
-from ohnoo.agents.detect import pick_agent
+from ohnoo.agents.detect import DEFAULT_PRIORITY, pick_agent
 from ohnoo.agents.prompt_builder import build_scoped_prompt
 
 _AGENT_MODULES = {
@@ -17,25 +17,27 @@ _AGENT_MODULES = {
     "agy": antigravity,
 }
 
+# codex/agy have no flag equivalent to claude's --allowedTools: "read-only"
+# on those backends is only a request written into the prompt, not a
+# technical restriction. --explain runs with no user confirmation at all
+# (unlike --fix), so it must never rely on a guarantee that isn't real --
+# only agents that can actually enforce read-only are eligible for it.
+_READONLY_CAPABLE_AGENTS = ("claude",)
+
 NO_AGENT_FOUND_MESSAGE = (
     "ohnoo: no agentic CLI found on $PATH (looked for: claude, codex, agy). "
     "Install one of these to enable Layer 2 diagnosis/fix, or configure Layer 4 "
     "(hosted LLM fallback) with `ohnoo setup-ai`."
 )
 
-# codex/agy have no flag equivalent to claude's --allowedTools: the read-only
-# guarantee for --explain on these backends is a prompt-level request, not a
-# technical restriction, so users should know that going in.
-_UNSCOPED_READONLY_WARNING = {
-    "codex": (
-        "ohnoo: note - codex has no read-only tool flag, so this is a request to "
-        "the model, not an enforced restriction.\n"
-    ),
-    "agy": (
-        "ohnoo: note - agy has no read-only tool flag, so this is a request to "
-        "the model, not an enforced restriction.\n"
-    ),
-}
+NO_READONLY_AGENT_MESSAGE = (
+    "ohnoo: found an agentic CLI, but not one with a technically-enforced "
+    "read-only mode (only Claude Code's --allowedTools Read supports that "
+    "today) -- codex/agy would run with full capabilities on unconfirmed "
+    "input, so --explain refuses rather than pretend that's safe. Install "
+    "`claude`, or use `ohnoo fix` instead: it always asks for confirmation "
+    "first and offers to revert afterward."
+)
 
 # Per-process only: a real "once per shell session" would need a file lock /
 # on-disk marker keyed to the session, which is out of scope here.
@@ -73,18 +75,25 @@ def explain(
 ) -> str:
     """Pick an available agent and ask it to diagnose the error, read-only.
 
-    Returns the agent's explanation text, or a clear message if no
+    Only ever picks an agent that can technically enforce read-only (see
+    _READONLY_CAPABLE_AGENTS) -- codex/agy are never invoked here, even if
+    present, since their "read-only" is prompt-level only.
+
+    Returns the agent's explanation text, or a clear message if no eligible
     agentic CLI is available. Never raises.
     """
-    agent_name = pick_agent(priority)
+    base_priority = priority if priority is not None else DEFAULT_PRIORITY
+    readonly_priority = [name for name in base_priority if name in _READONLY_CAPABLE_AGENTS]
+
+    agent_name = pick_agent(readonly_priority)
     if agent_name is None:
+        if pick_agent(base_priority) is not None:
+            return NO_READONLY_AGENT_MESSAGE
         return NO_AGENT_FOUND_MESSAGE
 
     prompt = build_scoped_prompt(traceback_text, None, None, mode="explain")
     module = _AGENT_MODULES[agent_name]
-    result = module.invoke_explain(prompt, cwd=cwd)
-    warning = _UNSCOPED_READONLY_WARNING.get(agent_name, "")
-    return warning + result
+    return module.invoke_explain(prompt, cwd=cwd)
 
 
 def fix(

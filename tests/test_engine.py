@@ -9,7 +9,9 @@ def test_python_module_not_found_matches_and_fills_slot():
     assert result.matched
     assert result.pattern_id == "py-module-not-found"
     assert "requests" in result.joke
-    assert result.fix_command == "pip install requests"
+    # Shell-quoted so the suggested command can't be turned into an
+    # injection vector by a crafted module name in the crash text.
+    assert result.fix_command == "pip install 'requests'"
 
 
 def test_node_eaddrinuse_matches_and_fills_port():
@@ -39,3 +41,20 @@ def test_vibe_override_is_used_when_present():
     result = diagnose(text, vibe="zen")
     assert result.matched
     assert "flask" in result.joke
+
+
+def test_captured_slot_with_shell_metacharacters_is_neutralized_in_fix_command():
+    """Regression test: a crafted crash message could previously inject
+    live shell syntax into a *suggested* fix command via an unquoted slot
+    substitution -- e.g. a FileNotFoundError whose path is attacker text
+    containing `$(...)`. If a user copy-pasted the suggested command, that
+    would execute. Slot values must now always render as inert, quoted
+    data."""
+    payload = "/tmp/$(touch /tmp/pwned)"
+    text = f"FileNotFoundError: [Errno 2] No such file or directory: '{payload}'"
+    result = diagnose(text)
+    assert result.matched
+    assert result.pattern_id == "py-file-not-found"
+    # The payload must be wrapped in single quotes -- inside single quotes
+    # a POSIX shell performs no expansion at all, so $(...) is inert.
+    assert result.fix_command == "ls -la $(dirname '/tmp/$(touch /tmp/pwned)')"

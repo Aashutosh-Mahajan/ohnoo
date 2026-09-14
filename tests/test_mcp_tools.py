@@ -21,7 +21,8 @@ def test_diagnose_error_matches_python_module_not_found():
     assert result["matched"] is True
     assert result["pattern_id"] == "py-module-not-found"
     assert "py-module-not-found" in result["diagnosis"]
-    assert "pip install requests" in result["suggested_fix"]
+    # Shell-quoted -- see _fill_command() in patterns/__init__.py.
+    assert "pip install 'requests'" in result["suggested_fix"]
 
 
 def test_diagnose_error_includes_file_context_in_matching():

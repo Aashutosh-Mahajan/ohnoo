@@ -26,7 +26,7 @@ class Fix:
     def render(self, slots: dict) -> Fix:
         return Fix(
             summary=_fill(self.summary, slots),
-            command=_fill(self.command, slots),
+            command=_fill_command(self.command, slots),
         )
 
 
@@ -114,6 +114,33 @@ def _fill(template: str, slots: dict) -> str:
     def repl(m: re.Match) -> str:
         key = m.group(1)
         return str(slots.get(key, m.group(0)))
+
+    return _SLOT_RE.sub(repl, template)
+
+
+def _shell_quote(value: str) -> str:
+    """POSIX single-quote a value so a shell can only ever see it as inert
+    literal data, never as syntax, if a user copies a suggested fix command
+    verbatim. Slot values come from regex captures on untrusted crash text
+    (which may itself come from an untrusted package/script) -- a captured
+    path or ref could contain `$(...)`, backticks, `;`, etc.
+    """
+    return "'" + str(value).replace("'", "'\\''") + "'"
+
+
+def _fill_command(template: str, slots: dict) -> str:
+    """Like _fill(), but every substituted slot value is shell-quoted.
+
+    Only for Fix.command, which is a literal shell command a user might
+    copy-paste and run -- never for jokes or the fix summary, which are
+    prose and shouldn't be dressed up with stray quote marks.
+    """
+
+    def repl(m: re.Match) -> str:
+        key = m.group(1)
+        if key not in slots:
+            return m.group(0)
+        return _shell_quote(slots[key])
 
     return _SLOT_RE.sub(repl, template)
 

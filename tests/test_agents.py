@@ -143,6 +143,42 @@ def test_handoff_fix_no_agent_available_returns_failure_fixresult():
     assert result.error is not None
 
 
+def test_handoff_explain_refuses_codex_only_environment_without_invoking_it():
+    """codex has no technically-enforced read-only mode, so --explain must
+    refuse rather than run it with full capabilities on unconfirmed input."""
+    fake_which = lambda name: "/usr/bin/codex" if name == "codex" else None
+    with patch("ohnoo.agents.detect.shutil.which", side_effect=fake_which), patch(
+        "ohnoo.agents._common.subprocess.run"
+    ) as mock_run:
+        result = handoff.explain(PY_TRACEBACK)
+
+    assert "read-only" in result.lower()
+    mock_run.assert_not_called()
+
+
+def test_handoff_explain_refuses_agy_only_environment_without_invoking_it():
+    fake_which = lambda name: "/usr/bin/agy" if name == "agy" else None
+    with patch("ohnoo.agents.detect.shutil.which", side_effect=fake_which), patch(
+        "ohnoo.agents._common.subprocess.run"
+    ) as mock_run:
+        result = handoff.explain(PY_TRACEBACK)
+
+    assert "read-only" in result.lower()
+    mock_run.assert_not_called()
+
+
+def test_handoff_explain_prefers_claude_over_codex_when_both_present():
+    fake_which = lambda name: f"/usr/bin/{name}" if name in ("claude", "codex") else None
+    fake_result = subprocess.CompletedProcess(args=["claude"], returncode=0, stdout="diagnosis", stderr="")
+    with patch("ohnoo.agents.detect.shutil.which", side_effect=fake_which), patch(
+        "ohnoo.agents._common.subprocess.run", return_value=fake_result
+    ) as mock_run:
+        result = handoff.explain(PY_TRACEBACK)
+
+    assert result == "diagnosis"
+    assert mock_run.call_args[0][0][0] == "claude"
+
+
 # --- handoff.py: agent available, subprocess mocked ----------------------
 
 
