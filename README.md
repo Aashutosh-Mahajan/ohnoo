@@ -6,8 +6,6 @@
 
 <img src="docs/demo-terminal.svg" alt="ohnoo catching a ModuleNotFoundError, roasting it, and giving the fix — typed live in a terminal window" width="700" />
 
-<sub>That's not a screen recording — it's a self-contained animated SVG that types itself out, so it plays right here with no video file. A real terminal recording will replace it once the repo is live; see <a href="docs/recording-the-demo-gif.md">docs/recording-the-demo-gif.md</a>.</sub>
-
 [![License: MIT](https://img.shields.io/badge/license-MIT-7cff9e.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3d8f57.svg)](pyproject.toml)
 [![Offline by default](https://img.shields.io/badge/network%20calls-0%20by%20default-ffb454.svg)](#privacy-in-one-sentence)
