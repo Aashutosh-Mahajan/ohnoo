@@ -67,8 +67,8 @@ Optional handoff to an installed AI coding agent, optional MCP server mode
 for IDE-embedded agents, optional opt-in hosted-LLM fallback.
 
 pip install ohnoo && ohnoo init (yes, it's a Python CLI even though it's
-aimed at Node devs too — npm wrapper also available: npm i -g ohnoo, which
-just shells out to the same binary)
+aimed at Node devs too — pipx install ohnoo works too if you'd rather keep
+it isolated from your other Python packages)
 
 [repo link]
 ```
