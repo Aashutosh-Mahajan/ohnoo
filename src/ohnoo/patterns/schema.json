@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ohnoo.dev/schema/pattern.json",
+  "title": "ohnoo pattern",
+  "description": "One recognizable error pattern: how to detect it, how to joke about it, and how to actually fix it.",
+  "type": "object",
+  "required": ["id", "language", "matcher", "jokes", "fix"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "Unique, stable, kebab-case identifier. Never reuse or repurpose across versions."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["python", "node", "git", "docker", "npm", "pip", "generic"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Short human name for the error, e.g. 'ModuleNotFoundError'."
+    },
+    "matcher": {
+      "type": "object",
+      "required": ["type", "pattern"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["regex", "exception_type", "substring"]
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Regex source, exact exception type name, or literal substring, depending on 'type'."
+        },
+        "flags": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["ignorecase", "multiline", "dotall"] }
+        }
+      }
+    },
+    "slots": {
+      "type": "object",
+      "description": "Named capture groups (regex matcher) mapped to slot names usable in jokes/fix, e.g. {'1': 'module_name'}.",
+      "additionalProperties": { "type": "string" }
+    },
+    "jokes": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 10,
+      "items": { "type": "string" },
+      "description": "5-10 joke variants for the default personality. May reference slots as {slot_name}."
+    },
+    "vibes": {
+      "type": "object",
+      "description": "Optional per-personality overrides of the joke lines. Keys are vibe names; falls back to 'jokes' when a vibe/pattern combo is missing.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "minItems": 1
+      }
+    },
+    "fix": {
+      "type": "object",
+      "required": ["summary", "command"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "One-line human-readable description of the real fix."
+        },
+        "command": {
+          "type": "string",
+          "description": "The actual shell command to run, with {slot_name} placeholders. May be empty string if no single command applies."
+        }
+      }
+    },
+    "personality_tag": {
+      "type": "string",
+      "description": "Optional grouping tag for --vibe reskinning (e.g. 'dependency', 'network', 'syntax')."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
